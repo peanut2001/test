@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医学AI图像标注原型</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        /* 三栏布局样式 */
+        .three-column-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr 280px;
+            gap: 20px;
+            height: calc(100vh - 200px);
+            overflow: hidden;
+        }
+
+        .left-column, .middle-column, .right-column {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        /* 左栏样式 */
+        .left-column {
+            padding: 20px;
+        }
+
+        .input-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clinical-input textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .clinical-input textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .upload-section {
+            margin-top: 25px;
+        }
+
+        .upload-section h4 {
+            color: #34495e;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 16px;
+        }
+
+        #annotationUploadArea {
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        #annotationUploadArea:hover {
+            border-color: #4CAF50;
+            background: #f8f9fa;
+        }
+
+        #annotationUploadArea.dragover {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+
+        .upload-placeholder i {
+            font-size: 2rem;
+            color: #95a5a6;
+            margin-bottom: 10px;
+        }
+
+        .upload-placeholder p {
+            margin: 5px 0;
+            color: #7f8c8d;
+        }
+
+        .upload-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            background: #45a049;
+        }
+
+        .uploaded-images {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .uploaded-images h5 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .thumbnail-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .thumbnail-item {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid #e1e8ed;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .thumbnail-item:hover {
+            border-color: #4CAF50;
+            transform: scale(1.05);
+        }
+
+        .thumbnail-item.active {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+        }
+
+        .thumbnail-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumbnail-remove {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-buttons {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* 中栏样式 */
+        .middle-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .clinical-data-section, .ai-thinking-section, .ai-answer-section {
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e1e8ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h3 {
+            color: #2c3e50;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .image-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .image-counter {
+            font-size: 14px;
+            color: #666;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* 图像标注容器 */
+        .image-annotation-container {
+            position: relative;
+        }
+
+        .image-display {
+            position: relative;
+            background: #f8f9fa;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #annotationCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            cursor: crosshair;
+        }
+
+        #currentImage {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        /* 标注工具栏 */
+        .annotation-toolbar {
+            background: #fff;
+            border-top: 1px solid #e1e8ed;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tool-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        .tool-btn {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .tool-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .tool-btn.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+
+        .tool-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #f0f0f0;
+            border-color: #adb5bd;
+        }
+
+        /* 标注列表样式 */
+        .annotation-list {
+            padding: 16px;
+            border-top: 1px solid #e1e8ed;
+            background: #fafbfc;
+        }
+
+        .annotation-list h4 {
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .annotations {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .annotation-item {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .annotation-item:hover {
+            border-color: #4CAF50;
+            background: #f8fff8;
+        }
+
+        .annotation-item.highlighted {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+
+        .annotation-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .annotation-id {
+            background: #4CAF50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .annotation-text {
+            font-size: 13px;
+            color: #2c3e50;
+        }
+
+        .annotation-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .annotation-action {
+            background: none;
+            border: none;
+            padding: 4px;
+            border-radius: 3px;
+            cursor: pointer;
+            color: #666;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .annotation-action:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        /* AI思考和回答区域 */
+        .thinking-content, .answer-content {
+            padding: 16px;
+            min-height: 120px;
+        }
+
+        .thinking-placeholder, .answer-placeholder {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 20px;
+        }
+
+        .thinking-placeholder i, .answer-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .thinking-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-text {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .status-loading {
+            color: #f39c12;
+        }
+
+        .status-complete {
+            color: #27ae60;
+        }
+
+        .answer-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* 右栏样式 */
+        .right-column {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .history-section, .settings-section {
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .history-section h3, .settings-section h3 {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            margin: 0;
+            color: #2c3e50;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .history-list {
+            padding: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-placeholder {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 20px;
+        }
+
+        .history-placeholder i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .settings-section .setting-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .settings-section .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-item label {
+            display: block;
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .setting-item select {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .setting-item input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        /* 加载动画 */
+        .fa-spin {
+            animation: fa-spin 1s infinite linear;
+        }
+
+        @keyframes fa-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .three-column-layout {
+                grid-template-columns: 280px 1fr 260px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .three-column-layout {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+                height: auto;
+            }
+
+            .left-column, .middle-column, .right-column {
+                height: auto;
+            }
+
+            .image-display {
+                min-height: 250px;
+            }
+
+            #currentImage {
+                max-height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .three-column-layout {
+                gap: 15px;
+            }
+
+            .left-column, .middle-column, .right-column {
+                padding: 15px;
+            }
+
+            .annotation-toolbar {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+
+            .tool-group, .tool-actions {
+                justify-content: center;
+            }
+
+            .thumbnail-list {
+                justify-content: center;
+            }
+
+            .action-buttons {
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .image-controls {
+                align-self: stretch;
+                justify-content: space-between;
+            }
+
+            .tool-btn {
+                flex: 1;
+                text-align: center;
+            }
+
+            .annotation-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .annotation-actions {
+                align-self: stretch;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-stethoscope"></i> 医学AI图像标注原型</h1>
+            <p>支持图像上传、智能标注、AI分析的医学诊断辅助系统</p>
+        </div>
+
+        <!-- 三栏布局容器 -->
+        <div class="three-column-layout">
+            <!-- 左栏：任务输入区 -->
+            <div class="left-column">
+                <div class="input-section">
+                    <h3><i class="fas fa-edit"></i> 临床问题输入</h3>
+                    <div class="clinical-input">
+                        <textarea
+                            id="clinicalQuestion"
+                            placeholder="请输入临床问题或症状描述，例如：患者女性，45岁，发现右乳肿块2周，质地较硬，边界不清..."
+                            rows="4"
+                        ></textarea>
+                    </div>
+
+                    <!-- 图片上传模块 -->
+                    <div class="upload-section">
+                        <h4><i class="fas fa-upload"></i> 上传影像/报告</h4>
+                        <div class="upload-area" id="annotationUploadArea">
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>点击或拖拽上传医学图像</p>
+                                <p class="file-types">支持JPG, PNG, DICOM等格式</p>
+                                <button type="button" class="upload-btn">
+                                    <i class="fas fa-plus"></i> 上传影像/报告
+                                </button>
+                            </div>
+                            <input type="file" id="annotationImageInput" accept=".jpg,.jpeg,.png,.dcm,.dicom" multiple hidden>
+
+                            <!-- 上传的图片缩略图列表 -->
+                            <div class="uploaded-images" id="uploadedImagesList" style="display: none;">
+                                <h5>已上传的图像：</h5>
+                                <div class="thumbnail-list" id="thumbnailList">
+                                    <!-- 缩略图将在这里动态生成 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 工作流程说明 -->
+                    <div class="workflow-notice" style="background: #f0f8ff; border: 1px solid #2196F3; border-radius: 6px; padding: 12px; margin-top: 15px; font-size: 13px;">
+                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #1976d2;">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>智能工作流程</strong>
+                        </div>
+                        <ol style="margin: 0; padding-left: 16px; color: #333; line-height: 1.4;">
+                            <li>上传图像后，AI将自动分析并建议标注位置</li>
+                            <li>您可以确认、调整或删除AI建议的标注</li>
+                            <li>根据需要添加自己的标注</li>
+                            <li>点击"重新分析"获取更新的诊断建议</li>
+                        </ol>
+                    </div>
+
+                    <!-- 分析按钮 -->
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-primary" id="startAnalysisBtn">
+                            <i class="fas fa-brain"></i> 重新分析
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="clearInputBtn">
+                            <i class="fas fa-trash"></i> 清空输入
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 中栏：AI响应与编辑区 -->
+            <div class="middle-column">
+                <!-- 影像资料展示区 -->
+                <div class="clinical-data-section" id="clinicalDataSection" style="display: none;">
+                    <div class="section-header">
+                        <h3><i class="fas fa-images"></i> 临床资料 (Clinical Data)</h3>
+                        <div class="image-controls">
+                            <button class="control-btn" id="prevImageBtn" title="上一张">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="image-counter" id="imageCounter">1 / 1</span>
+                            <button class="control-btn" id="nextImageBtn" title="下一张">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 图片展示和标注区域 -->
+                    <div class="image-annotation-container">
+                        <div class="image-display" id="imageDisplay">
+                            <canvas id="annotationCanvas"></canvas>
+                            <img id="currentImage" src="" alt="医学图像" style="display: none;">
+                        </div>
+
+                        <!-- 标注工具栏 -->
+                        <div class="annotation-toolbar" id="annotationToolbar" style="display: none;">
+                            <div class="tool-group">
+                                <button class="tool-btn active" data-tool="select" title="选择工具">
+                                    <i class="fas fa-mouse-pointer"></i>
+                                </button>
+                                <button class="tool-btn" data-tool="rectangle" title="矩形标注">
+                                    <i class="fas fa-square"></i>
+                                </button>
+                                <button class="tool-btn" data-tool="arrow" title="箭头指向">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                                <button class="tool-btn" data-tool="text" title="文本标签">
+                                    <i class="fas fa-font"></i>
+                                </button>
+                                <button class="tool-btn" data-tool="pen" title="画笔轮廓">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                            </div>
+                            <div class="tool-actions">
+                                <button class="action-btn" id="clearAnnotationsBtn" title="清除所有标注">
+                                    <i class="fas fa-eraser"></i>
+                                </button>
+                                <button class="action-btn" id="undoAnnotationBtn" title="撤销">
+                                    <i class="fas fa-undo"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 标注列表 -->
+                    <div class="annotation-list" id="annotationList">
+                        <h4>标注列表：</h4>
+                        <div class="annotations" id="annotationsContainer">
+                            <!-- 标注项将在这里动态生成 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI思考区域 -->
+                <div class="ai-thinking-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-brain"></i> 思考 (AI Analysis)</h3>
+                        <div class="thinking-status" id="thinkingStatus">
+                            <span class="status-text">等待分析...</span>
+                        </div>
+                    </div>
+                    <div class="thinking-content" id="thinkingContent">
+                        <div class="thinking-placeholder">
+                            <i class="fas fa-lightbulb"></i>
+                            <p>请上传图像并点击"重新分析"来查看AI的思考过程</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI回答区域 -->
+                <div class="ai-answer-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-comment-medical"></i> 回答 (AI Response)</h3>
+                        <div class="answer-actions">
+                            <button class="action-btn" id="editAnswerBtn" title="编辑回答">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" id="copyAnswerBtn" title="复制回答">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="answer-content" id="answerContent">
+                        <div class="answer-placeholder">
+                            <i class="fas fa-stethoscope"></i>
+                            <p>AI分析完成后，诊断建议将在此显示</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右栏：历史记录与设置 -->
+            <div class="right-column">
+                <div class="history-section">
+                    <h3><i class="fas fa-history"></i> 分析历史</h3>
+                    <div class="history-list" id="historyList">
+                        <div class="history-placeholder">
+                            <i class="fas fa-clock"></i>
+                            <p>暂无历史记录</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3><i class="fas fa-cog"></i> 分析设置</h3>
+                    <div class="setting-item">
+                        <label>分析模式：</label>
+                        <select id="analysisMode">
+                            <option value="comprehensive">综合分析</option>
+                            <option value="quick">快速分析</option>
+                            <option value="detailed">详细分析</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="enableAnnotationRef" checked>
+                            启用标注关联
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="autoHighlight" checked>
+                            自动高亮关联
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 图像标注系统
+        class ImageAnnotationSystem {
+            constructor() {
+                this.currentTool = 'select';
+                this.annotations = [];
+                this.annotationCounter = 0;
+                this.currentImageIndex = 0;
+                this.uploadedImages = [];
+                this.canvas = null;
+                this.ctx = null;
+                this.isDrawing = false;
+                this.startX = 0;
+                this.startY = 0;
+                this.currentAnnotation = null;
+
+                this.init();
+            }
+
+            init() {
+                this.initUpload();
+                this.initToolbar();
+                this.initImageControls();
+                this.initAnalysis();
+            }
+
+            // 初始化图片上传功能
+            initUpload() {
+                const uploadArea = document.getElementById('annotationUploadArea');
+                const uploadInput = document.getElementById('annotationImageInput');
+                const uploadBtn = uploadArea?.querySelector('.upload-btn');
+
+                if (!uploadArea || !uploadInput) return;
+
+                // 点击上传
+                uploadBtn?.addEventListener('click', () => {
+                    uploadInput.click();
+                });
+
+                uploadArea.addEventListener('click', (e) => {
+                    if (e.target === uploadArea || e.target.closest('.upload-placeholder')) {
+                        uploadInput.click();
+                    }
+                });
+
+                // 文件选择
+                uploadInput.addEventListener('change', (e) => {
+                    this.handleFileUpload(e.target.files);
+                });
+
+                // 拖拽上传
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+
+                uploadArea.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                });
+
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    this.handleFileUpload(e.dataTransfer.files);
+                });
+            }
+
+            // 处理文件上传
+            handleFileUpload(files) {
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const imageData = {
+                                id: Date.now() + Math.random(),
+                                name: file.name,
+                                src: e.target.result,
+                                annotations: []
+                            };
+                            this.uploadedImages.push(imageData);
+                            this.updateImageList();
+
+                            // 如果是第一张图片，自动显示
+                            if (this.uploadedImages.length === 1) {
+                                this.showImage(0);
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // 更新图片列表显示
+            updateImageList() {
+                const uploadedImagesDiv = document.getElementById('uploadedImagesList');
+                const thumbnailList = document.getElementById('thumbnailList');
+                const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+
+                if (!uploadedImagesDiv || !thumbnailList) return;
+
+                if (this.uploadedImages.length > 0) {
+                    uploadPlaceholder.style.display = 'none';
+                    uploadedImagesDiv.style.display = 'block';
+
+                    thumbnailList.innerHTML = this.uploadedImages.map((img, index) => `
+                        <div class="thumbnail-item ${index === this.currentImageIndex ? 'active' : ''}"
+                             data-index="${index}">
+                            <img src="${img.src}" alt="${img.name}">
+                            <button class="thumbnail-remove" data-index="${index}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `).join('');
+
+                    // 绑定缩略图点击事件
+                    thumbnailList.querySelectorAll('.thumbnail-item').forEach(item => {
+                        item.addEventListener('click', (e) => {
+                            if (!e.target.closest('.thumbnail-remove')) {
+                                const index = parseInt(item.dataset.index);
+                                this.showImage(index);
+                            }
+                        });
+                    });
+
+                    // 绑定删除按钮事件
+                    thumbnailList.querySelectorAll('.thumbnail-remove').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const index = parseInt(btn.dataset.index);
+                            this.removeImage(index);
+                        });
+                    });
+                } else {
+                    uploadPlaceholder.style.display = 'block';
+                    uploadedImagesDiv.style.display = 'none';
+                }
+            }
+
+            // 显示指定图片
+            showImage(index) {
+                if (index < 0 || index >= this.uploadedImages.length) return;
+
+                this.currentImageIndex = index;
+                const imageData = this.uploadedImages[index];
+                const currentImage = document.getElementById('currentImage');
+                const clinicalDataSection = document.getElementById('clinicalDataSection');
+                const imageCounter = document.getElementById('imageCounter');
+                const annotationToolbar = document.getElementById('annotationToolbar');
+
+                if (currentImage && clinicalDataSection) {
+                    currentImage.src = imageData.src;
+                    currentImage.style.display = 'block';
+                    clinicalDataSection.style.display = 'block';
+                    annotationToolbar.style.display = 'flex';
+
+                    // 更新图片计数器
+                    if (imageCounter) {
+                        imageCounter.textContent = `${index + 1} / ${this.uploadedImages.length}`;
+                    }
+
+                    // 更新缩略图激活状态
+                    this.updateImageList();
+
+                    // 重新初始化canvas
+                    this.initCanvas();
+
+                    // 加载该图片的标注
+                    this.loadAnnotations(imageData.annotations);
+
+                    // 更新图片控制按钮
+                    this.updateImageControls();
+
+                    // 🆕 自动触发AI分析（如果还没有分析过）
+                    if (!imageData.analyzed) {
+                        this.autoStartAIAnalysis();
+                        imageData.analyzed = true;
+                    }
+                }
+            }
+
+            // 删除图片
+            removeImage(index) {
+                if (index < 0 || index >= this.uploadedImages.length) return;
+
+                this.uploadedImages.splice(index, 1);
+
+                if (this.uploadedImages.length === 0) {
+                    // 没有图片了，隐藏显示区域
+                    const clinicalDataSection = document.getElementById('clinicalDataSection');
+                    if (clinicalDataSection) {
+                        clinicalDataSection.style.display = 'none';
+                    }
+                    this.currentImageIndex = 0;
+                } else {
+                    // 调整当前图片索引
+                    if (this.currentImageIndex >= this.uploadedImages.length) {
+                        this.currentImageIndex = this.uploadedImages.length - 1;
+                    }
+                    this.showImage(this.currentImageIndex);
+                }
+
+                this.updateImageList();
+            }
+
+            // 初始化Canvas
+            initCanvas() {
+                const canvas = document.getElementById('annotationCanvas');
+                const currentImage = document.getElementById('currentImage');
+
+                if (!canvas || !currentImage) return;
+
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+
+                // 等待图片加载完成后设置canvas尺寸
+                currentImage.onload = () => {
+                    canvas.width = currentImage.offsetWidth;
+                    canvas.height = currentImage.offsetHeight;
+                    canvas.style.width = currentImage.offsetWidth + 'px';
+                    canvas.style.height = currentImage.offsetHeight + 'px';
+
+                    // 重绘所有标注
+                    this.redrawAnnotations();
+                };
+
+                // 如果图片已经加载，立即设置尺寸
+                if (currentImage.complete) {
+                    canvas.width = currentImage.offsetWidth;
+                    canvas.height = currentImage.offsetHeight;
+                    canvas.style.width = currentImage.offsetWidth + 'px';
+                    canvas.style.height = currentImage.offsetHeight + 'px';
+                    this.redrawAnnotations();
+                }
+
+                // 绑定鼠标事件
+                this.bindCanvasEvents();
+            }
+
+            // 绑定Canvas事件
+            bindCanvasEvents() {
+                if (!this.canvas) return;
+
+                this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+                this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                this.canvas.addEventListener('mouseup', (e) => this.handleMouseUp(e));
+                this.canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
+            }
+
+            // 鼠标按下事件
+            handleMouseDown(e) {
+                if (this.currentTool === 'select') return;
+
+                const rect = this.canvas.getBoundingClientRect();
+                this.startX = e.clientX - rect.left;
+                this.startY = e.clientY - rect.top;
+                this.isDrawing = true;
+
+                if (this.currentTool === 'rectangle') {
+                    this.currentAnnotation = {
+                        type: 'rectangle',
+                        startX: this.startX,
+                        startY: this.startY,
+                        endX: this.startX,
+                        endY: this.startY
+                    };
+                }
+            }
+
+            // 鼠标移动事件
+            handleMouseMove(e) {
+                if (!this.isDrawing || this.currentTool === 'select') return;
+
+                const rect = this.canvas.getBoundingClientRect();
+                const currentX = e.clientX - rect.left;
+                const currentY = e.clientY - rect.top;
+
+                if (this.currentTool === 'rectangle' && this.currentAnnotation) {
+                    this.currentAnnotation.endX = currentX;
+                    this.currentAnnotation.endY = currentY;
+
+                    // 重绘canvas
+                    this.redrawAnnotations();
+                    this.drawTemporaryAnnotation(this.currentAnnotation);
+                }
+            }
+
+            // 鼠标释放事件
+            handleMouseUp(e) {
+                if (!this.isDrawing || this.currentTool === 'select') return;
+
+                this.isDrawing = false;
+
+                if (this.currentAnnotation) {
+                    // 检查标注是否有效（最小尺寸）
+                    const minSize = 10;
+                    const width = Math.abs(this.currentAnnotation.endX - this.currentAnnotation.startX);
+                    const height = Math.abs(this.currentAnnotation.endY - this.currentAnnotation.startY);
+
+                    if (width > minSize && height > minSize) {
+                        this.addAnnotation(this.currentAnnotation);
+                    }
+
+                    this.currentAnnotation = null;
+                    this.redrawAnnotations();
+                }
+            }
+
+            // Canvas点击事件（用于箭头和文本工具）
+            handleCanvasClick(e) {
+                if (this.currentTool === 'arrow' || this.currentTool === 'text') {
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const annotation = {
+                        type: this.currentTool,
+                        x: x,
+                        y: y
+                    };
+
+                    if (this.currentTool === 'text') {
+                        const text = prompt('请输入标注文本：');
+                        if (text) {
+                            annotation.text = text;
+                            this.addAnnotation(annotation);
+                        }
+                    } else {
+                        this.addAnnotation(annotation);
+                    }
+                }
+            }
+
+            // 添加标注
+            addAnnotation(annotation) {
+                this.annotationCounter++;
+                const annotationData = {
+                    id: this.annotationCounter,
+                    ...annotation,
+                    imageIndex: this.currentImageIndex
+                };
+
+                // 添加到当前图片的标注列表
+                if (this.uploadedImages[this.currentImageIndex]) {
+                    this.uploadedImages[this.currentImageIndex].annotations.push(annotationData);
+                }
+
+                // 添加到全局标注列表
+                this.annotations.push(annotationData);
+
+                // 更新标注列表显示
+                this.updateAnnotationList();
+
+                // 重绘canvas
+                this.redrawAnnotations();
+            }
+
+            // 加载标注
+            loadAnnotations(annotations) {
+                // 清空当前标注
+                this.annotations = this.annotations.filter(ann => ann.imageIndex !== this.currentImageIndex);
+
+                // 加载新标注
+                annotations.forEach(ann => {
+                    this.annotations.push({...ann, imageIndex: this.currentImageIndex});
+                });
+
+                this.updateAnnotationList();
+                this.redrawAnnotations();
+            }
+
+            // 重绘所有标注
+            redrawAnnotations() {
+                if (!this.ctx) return;
+
+                // 清空canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // 绘制当前图片的所有标注
+                const currentAnnotations = this.annotations.filter(ann => ann.imageIndex === this.currentImageIndex);
+
+                currentAnnotations.forEach(annotation => {
+                    this.drawAnnotation(annotation);
+                });
+            }
+
+            // 绘制单个标注
+            drawAnnotation(annotation) {
+                if (!this.ctx) return;
+
+                // 根据标注来源设置不同颜色
+                const isAISuggested = annotation.aiSuggested;
+                const strokeColor = isAISuggested ? '#2196F3' : '#4CAF50';  // AI建议用蓝色，医师标注用绿色
+                const fillColor = strokeColor;
+
+                this.ctx.strokeStyle = strokeColor;
+                this.ctx.lineWidth = 2;
+                this.ctx.fillStyle = fillColor;
+                this.ctx.font = '14px Arial';
+
+                // AI建议的标注使用虚线
+                if (isAISuggested) {
+                    this.ctx.setLineDash([8, 4]);
+                } else {
+                    this.ctx.setLineDash([]);
+                }
+
+                switch (annotation.type) {
+                    case 'rectangle':
+                        const width = annotation.endX - annotation.startX;
+                        const height = annotation.endY - annotation.startY;
+                        this.ctx.strokeRect(annotation.startX, annotation.startY, width, height);
+
+                        // 绘制标注ID
+                        this.ctx.fillStyle = fillColor;
+                        const idText = isAISuggested ? `AI${annotation.id}` : `#${annotation.id}`;
+                        const textWidth = this.ctx.measureText(idText).width + 10;
+                        this.ctx.fillRect(annotation.startX, annotation.startY - 20, textWidth, 20);
+                        this.ctx.fillStyle = 'white';
+                        this.ctx.fillText(idText, annotation.startX + 5, annotation.startY - 5);
+                        break;
+
+                    case 'arrow':
+                        // 绘制箭头
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(annotation.x - 20, annotation.y - 20);
+                        this.ctx.lineTo(annotation.x, annotation.y);
+                        this.ctx.lineTo(annotation.x - 10, annotation.y - 10);
+                        this.ctx.moveTo(annotation.x, annotation.y);
+                        this.ctx.lineTo(annotation.x - 10, annotation.y + 10);
+                        this.ctx.stroke();
+
+                        // 绘制标注ID
+                        this.ctx.fillStyle = fillColor;
+                        const arrowIdText = isAISuggested ? `AI${annotation.id}` : `#${annotation.id}`;
+                        const arrowTextWidth = this.ctx.measureText(arrowIdText).width + 10;
+                        this.ctx.fillRect(annotation.x - 40, annotation.y - 40, arrowTextWidth, 20);
+                        this.ctx.fillStyle = 'white';
+                        this.ctx.fillText(arrowIdText, annotation.x - 35, annotation.y - 25);
+                        break;
+
+                    case 'text':
+                        // 绘制文本
+                        this.ctx.fillStyle = fillColor;
+                        this.ctx.fillText(annotation.text || '', annotation.x, annotation.y);
+
+                        // 绘制标注ID背景
+                        const textIdText = isAISuggested ? `AI${annotation.id}` : `#${annotation.id}`;
+                        const textIdWidth = this.ctx.measureText(textIdText).width + 10;
+                        this.ctx.fillRect(annotation.x, annotation.y - 35, textIdWidth, 20);
+                        this.ctx.fillStyle = 'white';
+                        this.ctx.fillText(textIdText, annotation.x + 5, annotation.y - 20);
+                        break;
+                }
+
+                // 重置线条样式
+                this.ctx.setLineDash([]);
+            }
+
+            // 绘制临时标注（拖拽过程中）
+            drawTemporaryAnnotation(annotation) {
+                if (!this.ctx) return;
+
+                this.ctx.strokeStyle = '#4CAF50';
+                this.ctx.lineWidth = 2;
+                this.ctx.setLineDash([5, 5]);
+
+                if (annotation.type === 'rectangle') {
+                    const width = annotation.endX - annotation.startX;
+                    const height = annotation.endY - annotation.startY;
+                    this.ctx.strokeRect(annotation.startX, annotation.startY, width, height);
+                }
+
+                this.ctx.setLineDash([]);
+            }
+
+            // 更新标注列表显示
+            updateAnnotationList() {
+                const annotationsContainer = document.getElementById('annotationsContainer');
+                if (!annotationsContainer) return;
+
+                const currentAnnotations = this.annotations.filter(ann => ann.imageIndex === this.currentImageIndex);
+
+                if (currentAnnotations.length === 0) {
+                    annotationsContainer.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">暂无标注</p>';
+                    return;
+                }
+
+                annotationsContainer.innerHTML = currentAnnotations.map(annotation => {
+                    const isAISuggested = annotation.aiSuggested;
+                    let description = annotation.description || '';
+
+                    if (!description) {
+                        switch (annotation.type) {
+                            case 'rectangle':
+                                description = isAISuggested ? 'AI识别区域' : '矩形标注';
+                                break;
+                            case 'arrow':
+                                description = isAISuggested ? 'AI关注点' : '箭头指向';
+                                break;
+                            case 'text':
+                                description = annotation.text || '文本标注';
+                                break;
+                        }
+                    }
+
+                    const idStyle = isAISuggested
+                        ? 'background: #2196F3; color: white;'
+                        : 'background: #4CAF50; color: white;';
+                    const idText = isAISuggested ? `AI${annotation.id}` : `#${annotation.id}`;
+                    const itemClass = isAISuggested ? 'annotation-item ai-suggested' : 'annotation-item';
+
+                    return `
+                        <div class="${itemClass}" data-id="${annotation.id}" style="${isAISuggested ? 'border-left: 3px solid #2196F3;' : ''}">
+                            <div class="annotation-info">
+                                <span class="annotation-id" style="${idStyle} padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 500;">${idText}</span>
+                                <span class="annotation-text">${description}</span>
+                                ${isAISuggested ? '<span style="font-size: 11px; color: #666; margin-left: 8px;">🤖 AI建议</span>' : ''}
+                            </div>
+                            <div class="annotation-actions">
+                                <button class="annotation-action" onclick="imageAnnotationSystem.highlightAnnotation(${annotation.id})" title="高亮">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                ${isAISuggested ?
+                                    `<button class="annotation-action" onclick="imageAnnotationSystem.confirmAIAnnotation(${annotation.id})" title="确认AI建议" style="color: #2196F3;">
+                                        <i class="fas fa-check"></i>
+                                    </button>` :
+                                    `<button class="annotation-action" onclick="imageAnnotationSystem.editAnnotation(${annotation.id})" title="编辑">
+                                        <i class="fas fa-edit"></i>
+                                    </button>`
+                                }
+                                <button class="annotation-action" onclick="imageAnnotationSystem.deleteAnnotation(${annotation.id})" title="删除">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // 绑定鼠标悬停事件
+                annotationsContainer.querySelectorAll('.annotation-item').forEach(item => {
+                    const id = parseInt(item.dataset.id);
+
+                    item.addEventListener('mouseenter', () => {
+                        this.highlightAnnotation(id);
+                    });
+
+                    item.addEventListener('mouseleave', () => {
+                        this.unhighlightAnnotation(id);
+                    });
+                });
+            }
+
+            // 高亮标注
+            highlightAnnotation(id) {
+                const annotation = this.annotations.find(ann => ann.id === id);
+                if (!annotation) return;
+
+                // 重绘所有标注
+                this.redrawAnnotations();
+
+                // 高亮指定标注
+                this.ctx.strokeStyle = '#FF5722';
+                this.ctx.lineWidth = 3;
+                this.drawAnnotation({...annotation, highlighted: true});
+
+                // 高亮列表项
+                const listItem = document.querySelector(`[data-id="${id}"]`);
+                if (listItem) {
+                    listItem.classList.add('highlighted');
+                }
+            }
+
+            // 取消高亮标注
+            unhighlightAnnotation(id) {
+                this.redrawAnnotations();
+
+                const listItem = document.querySelector(`[data-id="${id}"]`);
+                if (listItem) {
+                    listItem.classList.remove('highlighted');
+                }
+            }
+
+            // 编辑标注
+            editAnnotation(id) {
+                const annotation = this.annotations.find(ann => ann.id === id);
+                if (!annotation) return;
+
+                if (annotation.type === 'text') {
+                    const newText = prompt('编辑标注文本：', annotation.text || '');
+                    if (newText !== null) {
+                        annotation.text = newText;
+                        this.updateAnnotationList();
+                        this.redrawAnnotations();
+                    }
+                }
+            }
+
+            // 确认AI建议的标注
+            confirmAIAnnotation(id) {
+                const annotation = this.annotations.find(ann => ann.id === id);
+                if (!annotation || !annotation.aiSuggested) return;
+
+                // 将AI建议转换为医师确认的标注
+                annotation.aiSuggested = false;
+                annotation.description = annotation.description?.replace('AI识别', '医师确认');
+
+                // 更新对应图片的标注
+                if (this.uploadedImages[this.currentImageIndex]) {
+                    const imgAnnotation = this.uploadedImages[this.currentImageIndex].annotations.find(ann => ann.id === id);
+                    if (imgAnnotation) {
+                        imgAnnotation.aiSuggested = false;
+                        imgAnnotation.description = annotation.description;
+                    }
+                }
+
+                this.updateAnnotationList();
+                this.redrawAnnotations();
+
+                // 显示确认提示
+                this.showConfirmationNotice();
+            }
+
+            // 显示确认提示
+            showConfirmationNotice() {
+                const notice = document.createElement('div');
+                notice.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #e8f5e8;
+                    border: 1px solid #4CAF50;
+                    border-radius: 8px;
+                    padding: 15px;
+                    max-width: 300px;
+                    z-index: 1000;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                `;
+                notice.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
+                        <strong style="color: #2e7d32;">已确认AI建议</strong>
+                    </div>
+                    <button onclick="this.parentElement.remove()" style="
+                        position: absolute;
+                        top: 5px;
+                        right: 8px;
+                        background: none;
+                        border: none;
+                        color: #666;
+                        cursor: pointer;
+                        font-size: 16px;
+                    ">×</button>
+                `;
+                document.body.appendChild(notice);
+
+                setTimeout(() => {
+                    if (notice.parentElement) {
+                        notice.remove();
+                    }
+                }, 3000);
+            }
+
+            // 删除标注
+            deleteAnnotation(id) {
+                const annotation = this.annotations.find(ann => ann.id === id);
+                const confirmText = annotation?.aiSuggested
+                    ? '确定要删除这个AI建议的标注吗？'
+                    : '确定要删除这个标注吗？';
+
+                if (confirm(confirmText)) {
+                    // 从全局列表中删除
+                    this.annotations = this.annotations.filter(ann => ann.id !== id);
+
+                    // 从图片标注列表中删除
+                    if (this.uploadedImages[this.currentImageIndex]) {
+                        this.uploadedImages[this.currentImageIndex].annotations =
+                            this.uploadedImages[this.currentImageIndex].annotations.filter(ann => ann.id !== id);
+                    }
+
+                    this.updateAnnotationList();
+                    this.redrawAnnotations();
+                }
+            }
+
+            // 初始化工具栏
+            initToolbar() {
+                const toolBtns = document.querySelectorAll('.tool-btn');
+                const clearBtn = document.getElementById('clearAnnotationsBtn');
+                const undoBtn = document.getElementById('undoAnnotationBtn');
+
+                // 工具选择
+                toolBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        toolBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentTool = btn.dataset.tool;
+
+                        // 更新canvas光标
+                        if (this.canvas) {
+                            switch (this.currentTool) {
+                                case 'select':
+                                    this.canvas.style.cursor = 'default';
+                                    break;
+                                case 'rectangle':
+                                case 'pen':
+                                    this.canvas.style.cursor = 'crosshair';
+                                    break;
+                                case 'arrow':
+                                case 'text':
+                                    this.canvas.style.cursor = 'pointer';
+                                    break;
+                            }
+                        }
+                    });
+                });
+
+                // 清除所有标注
+                clearBtn?.addEventListener('click', () => {
+                    if (confirm('确定要清除当前图片的所有标注吗？')) {
+                        this.clearCurrentImageAnnotations();
+                    }
+                });
+
+                // 撤销最后一个标注
+                undoBtn?.addEventListener('click', () => {
+                    this.undoLastAnnotation();
+                });
+            }
+
+            // 清除当前图片的所有标注
+            clearCurrentImageAnnotations() {
+                // 从全局列表中删除当前图片的标注
+                this.annotations = this.annotations.filter(ann => ann.imageIndex !== this.currentImageIndex);
+
+                // 清空当前图片的标注列表
+                if (this.uploadedImages[this.currentImageIndex]) {
+                    this.uploadedImages[this.currentImageIndex].annotations = [];
+                }
+
+                this.updateAnnotationList();
+                this.redrawAnnotations();
+            }
+
+            // 撤销最后一个标注
+            undoLastAnnotation() {
+                const currentAnnotations = this.annotations.filter(ann => ann.imageIndex === this.currentImageIndex);
+                if (currentAnnotations.length === 0) return;
+
+                const lastAnnotation = currentAnnotations[currentAnnotations.length - 1];
+                this.deleteAnnotation(lastAnnotation.id);
+            }
+
+            // 初始化图片控制
+            initImageControls() {
+                const prevBtn = document.getElementById('prevImageBtn');
+                const nextBtn = document.getElementById('nextImageBtn');
+
+                prevBtn?.addEventListener('click', () => {
+                    if (this.currentImageIndex > 0) {
+                        this.showImage(this.currentImageIndex - 1);
+                    }
+                });
+
+                nextBtn?.addEventListener('click', () => {
+                    if (this.currentImageIndex < this.uploadedImages.length - 1) {
+                        this.showImage(this.currentImageIndex + 1);
+                    }
+                });
+            }
+
+            // 更新图片控制按钮状态
+            updateImageControls() {
+                const prevBtn = document.getElementById('prevImageBtn');
+                const nextBtn = document.getElementById('nextImageBtn');
+
+                if (prevBtn) {
+                    prevBtn.disabled = this.currentImageIndex <= 0;
+                }
+
+                if (nextBtn) {
+                    nextBtn.disabled = this.currentImageIndex >= this.uploadedImages.length - 1;
+                }
+            }
+
+            // 初始化AI分析功能
+            initAnalysis() {
+                const startAnalysisBtn = document.getElementById('startAnalysisBtn');
+                const clearInputBtn = document.getElementById('clearInputBtn');
+
+                startAnalysisBtn?.addEventListener('click', () => {
+                    this.startAIAnalysis();
+                });
+
+                clearInputBtn?.addEventListener('click', () => {
+                    this.clearInput();
+                });
+            }
+
+            // 开始AI分析（手动触发）
+            startAIAnalysis() {
+                const clinicalQuestion = document.getElementById('clinicalQuestion')?.value;
+
+                if (!clinicalQuestion.trim() && this.uploadedImages.length === 0) {
+                    alert('请输入临床问题或上传图像后再开始分析');
+                    return;
+                }
+
+                this.performAIAnalysis(clinicalQuestion, false);
+            }
+
+            // 自动开始AI分析（图像上传后自动触发）
+            autoStartAIAnalysis() {
+                const clinicalQuestion = document.getElementById('clinicalQuestion')?.value;
+                this.performAIAnalysis(clinicalQuestion, true);
+            }
+
+            // 执行AI分析
+            performAIAnalysis(clinicalQuestion, isAutoAnalysis = false) {
+                const thinkingContent = document.getElementById('thinkingContent');
+                const answerContent = document.getElementById('answerContent');
+                const thinkingStatus = document.getElementById('thinkingStatus');
+
+                // 更新状态
+                if (thinkingStatus) {
+                    const statusText = isAutoAnalysis ? 'AI自动分析中...' : 'AI分析中...';
+                    thinkingStatus.innerHTML = `<span class="status-text status-loading">${statusText}</span>`;
+                }
+
+                // 模拟AI分析过程
+                this.simulateAIAnalysis(clinicalQuestion, thinkingContent, answerContent, thinkingStatus, isAutoAnalysis);
+            }
+
+            // 模拟AI分析过程
+            simulateAIAnalysis(question, thinkingContent, answerContent, statusElement, isAutoAnalysis = false) {
+                // 清空之前的内容
+                if (thinkingContent) {
+                    thinkingContent.innerHTML = '<div class="thinking-placeholder"><i class="fas fa-spinner fa-spin"></i><p>AI正在分析中...</p></div>';
+                }
+                if (answerContent) {
+                    answerContent.innerHTML = '<div class="answer-placeholder"><i class="fas fa-spinner fa-spin"></i><p>等待分析完成...</p></div>';
+                }
+
+                // 模拟分析延迟
+                setTimeout(() => {
+                    // 如果是自动分析且没有标注，AI先建议标注位置
+                    if (isAutoAnalysis && this.annotations.filter(ann => ann.imageIndex === this.currentImageIndex).length === 0) {
+                        this.generateAISuggestedAnnotations();
+                    }
+
+                    this.generateAIResponse(question, thinkingContent, answerContent, statusElement, isAutoAnalysis);
+                }, 2000);
+            }
+
+            // 生成AI建议的标注
+            generateAISuggestedAnnotations() {
+                if (!this.canvas || this.uploadedImages.length === 0) return;
+
+                // 模拟AI识别的关键区域（基于图像尺寸的相对位置）
+                const canvas = this.canvas;
+                const suggestions = [
+                    {
+                        type: 'rectangle',
+                        startX: canvas.width * 0.3,
+                        startY: canvas.height * 0.2,
+                        endX: canvas.width * 0.6,
+                        endY: canvas.height * 0.5,
+                        aiSuggested: true,
+                        description: 'AI识别：可疑病灶区域'
+                    },
+                    {
+                        type: 'arrow',
+                        x: canvas.width * 0.7,
+                        y: canvas.height * 0.3,
+                        aiSuggested: true,
+                        description: 'AI识别：需要关注的特征'
+                    }
+                ];
+
+                // 添加AI建议的标注
+                suggestions.forEach(suggestion => {
+                    this.addAnnotation(suggestion);
+                });
+
+                // 显示提示信息
+                this.showAISuggestionNotice();
+            }
+
+            // 显示AI建议提示
+            showAISuggestionNotice() {
+                const notice = document.createElement('div');
+                notice.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #e8f5e8;
+                    border: 1px solid #4CAF50;
+                    border-radius: 8px;
+                    padding: 15px;
+                    max-width: 300px;
+                    z-index: 1000;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                `;
+                notice.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <i class="fas fa-robot" style="color: #4CAF50;"></i>
+                        <strong style="color: #2e7d32;">AI智能建议</strong>
+                    </div>
+                    <p style="margin: 0; color: #2e7d32; font-size: 14px; line-height: 1.4;">
+                        AI已自动识别并标注了可疑区域，您可以根据需要调整或添加更多标注。
+                    </p>
+                    <button onclick="this.parentElement.remove()" style="
+                        position: absolute;
+                        top: 5px;
+                        right: 8px;
+                        background: none;
+                        border: none;
+                        color: #666;
+                        cursor: pointer;
+                        font-size: 16px;
+                    ">×</button>
+                `;
+                document.body.appendChild(notice);
+
+                // 3秒后自动消失
+                setTimeout(() => {
+                    if (notice.parentElement) {
+                        notice.remove();
+                    }
+                }, 5000);
+            }
+
+            // 生成AI响应
+            generateAIResponse(question, thinkingContent, answerContent, statusElement, isAutoAnalysis = false) {
+                // 更新状态
+                if (statusElement) {
+                    const statusText = isAutoAnalysis ? '自动分析完成' : '分析完成';
+                    statusElement.innerHTML = `<span class="status-text status-complete">${statusText}</span>`;
+                }
+
+                // 生成思考内容
+                const thinkingText = this.generateThinkingContent(question, isAutoAnalysis);
+                if (thinkingContent) {
+                    thinkingContent.innerHTML = thinkingText;
+                }
+
+                // 生成回答内容
+                const answerText = this.generateAnswerContent(question, isAutoAnalysis);
+                if (answerContent) {
+                    answerContent.innerHTML = answerText;
+                }
+
+                // 启用标注引用功能
+                this.enableAnnotationReferences();
+            }
+
+            // 生成思考内容
+            generateThinkingContent(question, isAutoAnalysis = false) {
+                const currentAnnotations = this.annotations.filter(ann => ann.imageIndex === this.currentImageIndex);
+                const aiSuggestedAnnotations = currentAnnotations.filter(ann => ann.aiSuggested);
+                const userAnnotations = currentAnnotations.filter(ann => !ann.aiSuggested);
+
+                let content = `<div style="padding: 16px; line-height: 1.6;">`;
+                content += `<p><strong>临床问题分析：</strong></p>`;
+                content += `<p>根据患者描述：${question || '未提供具体症状描述'}</p>`;
+
+                if (this.uploadedImages.length > 0) {
+                    content += `<p><strong>影像学分析：</strong></p>`;
+                    content += `<p>已上传 ${this.uploadedImages.length} 张医学图像进行分析。</p>`;
+
+                    if (isAutoAnalysis && aiSuggestedAnnotations.length > 0) {
+                        content += `<p><strong>🤖 AI自动识别特征：</strong></p><ul>`;
+                        aiSuggestedAnnotations.forEach(ann => {
+                            const desc = ann.description || this.getAnnotationDescription(ann);
+                            content += `<li><span class="annotation-reference" data-id="${ann.id}" style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #2196F3;">[AI-标注#${ann.id}]</span> ${desc}</li>`;
+                        });
+                        content += `</ul>`;
+                    }
+
+                    if (userAnnotations.length > 0) {
+                        content += `<p><strong>👨‍⚕️ 医师标注特征：</strong></p><ul>`;
+                        userAnnotations.forEach(ann => {
+                            const desc = ann.description || this.getAnnotationDescription(ann);
+                            content += `<li><span class="annotation-reference" data-id="${ann.id}" style="background: #e8f5e8; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #4CAF50;">[医师-标注#${ann.id}]</span> ${desc}</li>`;
+                        });
+                        content += `</ul>`;
+                    }
+
+                    if (currentAnnotations.length === 0) {
+                        content += `<p style="color: #666; font-style: italic;">暂无标注信息，建议对关键区域进行标注以获得更准确的分析。</p>`;
+                    }
+                }
+
+                content += `<p><strong>初步判断：</strong></p>`;
+                if (aiSuggestedAnnotations.length > 0) {
+                    content += `<p>基于AI智能识别和现有信息，发现了需要重点关注的区域。建议医师确认AI标注的准确性，并根据临床经验进行补充标注。</p>`;
+                } else {
+                    content += `<p>基于现有信息，建议进一步检查以明确诊断。需要结合患者病史、体格检查及其他辅助检查结果综合判断。</p>`;
+                }
+                content += `</div>`;
+
+                return content;
+            }
+
+            // 获取标注描述
+            getAnnotationDescription(annotation) {
+                switch (annotation.type) {
+                    case 'rectangle':
+                        return annotation.aiSuggested ? 'AI识别的可疑区域' : '框选区域显示异常密度改变';
+                    case 'arrow':
+                        return annotation.aiSuggested ? 'AI识别的关注点' : '箭头指向的结构需要重点关注';
+                    case 'text':
+                        return annotation.text || '文本标注区域';
+                    default:
+                        return '标注区域';
+                }
+            }
+
+            // 生成回答内容
+            generateAnswerContent(question, isAutoAnalysis = false) {
+                const currentAnnotations = this.annotations.filter(ann => ann.imageIndex === this.currentImageIndex);
+                const aiSuggestedAnnotations = currentAnnotations.filter(ann => ann.aiSuggested);
+                const userAnnotations = currentAnnotations.filter(ann => !ann.aiSuggested);
+
+                let content = `<div style="padding: 16px; line-height: 1.6;">`;
+                content += `<p><strong>诊断建议：</strong></p>`;
+
+                if (isAutoAnalysis && aiSuggestedAnnotations.length > 0) {
+                    content += `<p><strong>🤖 基于AI智能识别：</strong></p><ul>`;
+                    aiSuggestedAnnotations.forEach(ann => {
+                        content += `<li><span class="annotation-reference" data-id="${ann.id}" style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #2196F3;">[AI-标注#${ann.id}]</span> 区域需要医师进一步确认和评估</li>`;
+                    });
+                    content += `</ul>`;
+
+                    content += `<p style="background: #fff3e0; padding: 12px; border-radius: 6px; border-left: 4px solid #ff9800; margin: 15px 0;">
+                        <strong>💡 AI建议：</strong> 请医师根据临床经验确认AI标注的准确性，并可根据需要添加或调整标注位置。
+                    </p>`;
+                }
+
+                if (userAnnotations.length > 0) {
+                    content += `<p><strong>👨‍⚕️ 基于医师标注：</strong></p><ul>`;
+                    userAnnotations.forEach(ann => {
+                        content += `<li><span class="annotation-reference" data-id="${ann.id}" style="background: #e8f5e8; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid #4CAF50;">[医师-标注#${ann.id}]</span> 区域的特征提示需要进一步评估</li>`;
+                    });
+                    content += `</ul>`;
+                }
+
+                content += `<p><strong>临床建议：</strong></p>`;
+                content += `<ul>`;
+                if (aiSuggestedAnnotations.length > 0) {
+                    content += `<li>确认AI识别的可疑区域，结合临床症状进行综合判断</li>`;
+                }
+                content += `<li>建议结合患者病史、体格检查及实验室检查结果</li>`;
+                content += `<li>如有必要，可考虑进一步影像学检查或病理检查</li>`;
+                content += `<li>建议专科医师会诊，制定个体化治疗方案</li>`;
+                content += `<li>定期随访观察病情变化</li>`;
+                content += `</ul>`;
+
+                content += `<p><strong>注意事项：</strong></p>`;
+                content += `<p>本AI分析仅供参考，最终诊断需要结合完整的临床资料由专业医师做出。AI标注区域需要医师确认其临床意义。</p>`;
+                content += `</div>`;
+
+                return content;
+            }
+
+            // 启用标注引用功能
+            enableAnnotationReferences() {
+                const references = document.querySelectorAll('.annotation-reference');
+
+                references.forEach(ref => {
+                    const annotationId = parseInt(ref.dataset.id);
+
+                    ref.addEventListener('mouseenter', () => {
+                        this.highlightAnnotation(annotationId);
+                        ref.style.background = '#c8e6c9';
+                        ref.style.transform = 'scale(1.05)';
+                    });
+
+                    ref.addEventListener('mouseleave', () => {
+                        this.unhighlightAnnotation(annotationId);
+                        ref.style.background = '#e8f5e8';
+                        ref.style.transform = 'scale(1)';
+                    });
+
+                    ref.addEventListener('click', () => {
+                        this.highlightAnnotation(annotationId);
+                        // 滚动到对应的标注列表项
+                        const listItem = document.querySelector(`[data-id="${annotationId}"]`);
+                        if (listItem) {
+                            listItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    });
+                });
+            }
+
+            // 清空输入
+            clearInput() {
+                if (confirm('确定要清空所有输入内容吗？')) {
+                    const clinicalQuestion = document.getElementById('clinicalQuestion');
+                    const thinkingContent = document.getElementById('thinkingContent');
+                    const answerContent = document.getElementById('answerContent');
+                    const thinkingStatus = document.getElementById('thinkingStatus');
+
+                    if (clinicalQuestion) clinicalQuestion.value = '';
+
+                    if (thinkingContent) {
+                        thinkingContent.innerHTML = '<div class="thinking-placeholder"><i class="fas fa-lightbulb"></i><p>请上传图像并点击"重新分析"来查看AI的思考过程</p></div>';
+                    }
+
+                    if (answerContent) {
+                        answerContent.innerHTML = '<div class="answer-placeholder"><i class="fas fa-stethoscope"></i><p>AI分析完成后，诊断建议将在此显示</p></div>';
+                    }
+
+                    if (thinkingStatus) {
+                        thinkingStatus.innerHTML = '<span class="status-text">等待分析...</span>';
+                    }
+
+                    // 清空图片和标注
+                    this.uploadedImages = [];
+                    this.annotations = [];
+                    this.annotationCounter = 0;
+                    this.currentImageIndex = 0;
+
+                    this.updateImageList();
+
+                    const clinicalDataSection = document.getElementById('clinicalDataSection');
+                    if (clinicalDataSection) {
+                        clinicalDataSection.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        // 初始化图像标注系统
+        let imageAnnotationSystem;
+
+        // 当页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            imageAnnotationSystem = new ImageAnnotationSystem();
+        });
+    </script>
+</body>
+</html>

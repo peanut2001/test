@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医学图像数据采集管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-stethoscope"></i>
+                    <span class="logo-text">医学AI系统</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#dashboard" class="nav-link active" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span class="nav-text">仪表盘</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#data-collection" class="nav-link" data-page="data-collection">
+                            <i class="fas fa-upload"></i>
+                            <span class="nav-text">数据采集</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#data-management" class="nav-link" data-page="data-management">
+                            <i class="fas fa-database"></i>
+                            <span class="nav-text">数据管理</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#image-analysis" class="nav-link" data-page="image-analysis">
+                            <i class="fas fa-search"></i>
+                            <span class="nav-text">图像分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#diagnosis-review" class="nav-link" data-page="diagnosis-review">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span class="nav-text">诊断审核</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#model-scoring" class="nav-link" data-page="model-scoring">
+                            <i class="fas fa-star"></i>
+                            <span class="nav-text">模型评分</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#reports" class="nav-link" data-page="reports">
+                            <i class="fas fa-chart-bar"></i>
+                            <span class="nav-text">统计报告</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#settings" class="nav-link" data-page="settings">
+                            <i class="fas fa-cog"></i>
+                            <span class="nav-text">系统设置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name">张医生</span>
+                        <span class="user-role">主治医师</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 顶部导航栏 -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="page-title" id="pageTitle">仪表盘</h1>
+                </div>
+
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="header-btn" title="通知">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge">3</span>
+                        </button>
+                        <button class="header-btn" title="消息">
+                            <i class="fas fa-envelope"></i>
+                        </button>
+                        <div class="user-menu">
+                            <button class="user-menu-btn">
+                                <img src="https://via.placeholder.com/32x32/4CAF50/ffffff?text=张" alt="用户头像" class="user-avatar-small">
+                                <span class="user-name-small">张医生</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="user-dropdown">
+                                <a href="#profile" class="dropdown-item">
+                                    <i class="fas fa-user"></i> 个人资料
+                                </a>
+                                <a href="#preferences" class="dropdown-item">
+                                    <i class="fas fa-cog"></i> 偏好设置
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="#logout" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i> 退出登录
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 页面内容容器 -->
+            <div class="content-wrapper">
+                <!-- 仪表盘页面 -->
+                <div id="dashboard-page" class="page-content active">
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-images"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>1,234</h3>
+                                <p>总图像数量</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>856</h3>
+                                <p>已完成诊断</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>378</h3>
+                                <p>待处理</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>12</h3>
+                                <p>在线医生</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-charts">
+                        <div class="chart-card">
+                            <h3>诊断类型分布</h3>
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-pie"></i>
+                                <p>图表区域</p>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>每日处理量</h3>
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-line"></i>
+                                <p>图表区域</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据采集页面 -->
+                <div id="data-collection-page" class="page-content">
+                    <div class="page-header">
+                        <h2>医学图像数据采集</h2>
+                        <p class="page-description">支持乳腺超声、CT、MRI、X光等医学图像的结构化诊断数据采集</p>
+                    </div>
+
+                    <form id="medicalDataForm" class="data-form">
+                <!-- 图像上传区域 -->
+                <section class="form-section">
+                    <h2><i class="fas fa-upload"></i> 图像文件上传</h2>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-placeholder">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>点击或拖拽上传医学图像</p>
+                            <p class="file-types">支持格式：JPG, PNG, DICOM, AVI</p>
+                        </div>
+                        <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,.dcm,.dicom,.avi" hidden>
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <img id="previewImg" src="" alt="预览图像">
+                            <div class="image-info">
+                                <span id="fileName"></span>
+                                <button type="button" class="remove-btn" id="removeImage">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 图像特征分析 -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-search"></i> 图像特征分析</h2>
+                        <button type="button" class="add-item-btn" id="addFeatureBtn">
+                            <i class="fas fa-plus"></i> 添加特征
+                        </button>
+                    </div>
+                    <div class="tags-container" id="featuresContainer">
+                        <!-- 预设一些常见特征 -->
+                        <div class="tag-item" data-category="features">
+                            <span class="tag-text">边界清晰</span>
+                            <button type="button" class="tag-remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="tag-item" data-category="features">
+                            <span class="tag-text">回声均匀</span>
+                            <button type="button" class="tag-remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="tag-item" data-category="features">
+                            <span class="tag-text">形态规则</span>
+                            <button type="button" class="tag-remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tag-input-group" id="featureInputGroup" style="display: none;">
+                        <input type="text" class="tag-input" placeholder="输入图像特征描述" maxlength="50">
+                        <button type="button" class="tag-confirm-btn">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button type="button" class="tag-cancel-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="preset-tags">
+                        <span class="preset-label">常用特征：</span>
+                        <button type="button" class="preset-tag" data-text="低回声区">低回声区</button>
+                        <button type="button" class="preset-tag" data-text="高回声区">高回声区</button>
+                        <button type="button" class="preset-tag" data-text="混合回声">混合回声</button>
+                        <button type="button" class="preset-tag" data-text="边界模糊">边界模糊</button>
+                        <button type="button" class="preset-tag" data-text="钙化灶">钙化灶</button>
+                        <button type="button" class="preset-tag" data-text="血流信号">血流信号</button>
+                    </div>
+                </section>
+
+                <!-- 诊断联想 -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-brain"></i> 诊断联想</h2>
+                        <button type="button" class="add-item-btn" id="addThinkingBtn">
+                            <i class="fas fa-plus"></i> 添加联想
+                        </button>
+                    </div>
+                    <div class="tags-container" id="thinkingContainer">
+                        <!-- 预设一些诊断联想 -->
+                        <div class="tag-item" data-category="thinking">
+                            <span class="tag-text">考虑良性结节</span>
+                            <button type="button" class="tag-remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="tag-item" data-category="thinking">
+                            <span class="tag-text">结合BRADS分级</span>
+                            <button type="button" class="tag-remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tag-input-group" id="thinkingInputGroup" style="display: none;">
+                        <input type="text" class="tag-input" placeholder="输入诊断联想内容" maxlength="50">
+                        <button type="button" class="tag-confirm-btn">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button type="button" class="tag-cancel-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="preset-tags">
+                        <span class="preset-label">常用联想：</span>
+                        <button type="button" class="preset-tag" data-text="需要进一步检查">需要进一步检查</button>
+                        <button type="button" class="preset-tag" data-text="建议定期复查">建议定期复查</button>
+                        <button type="button" class="preset-tag" data-text="考虑恶性可能">考虑恶性可能</button>
+                        <button type="button" class="preset-tag" data-text="典型良性表现">典型良性表现</button>
+                        <button type="button" class="preset-tag" data-text="需要病理确诊">需要病理确诊</button>
+                    </div>
+                </section>
+
+                <!-- 诊断依据 -->
+                <section class="form-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-clipboard-list"></i> 诊断依据</h2>
+                        <button type="button" class="add-item-btn" id="addBasisBtn">
+                            <i class="fas fa-plus"></i> 添加依据
+                        </button>
+                    </div>
+                    <div class="tags-container" id="basisContainer">
+                        <!-- 预设一些诊断依据 -->
+                        <div class="tag-item" data-category="basis">
+                            <span class="tag-text">无钙化表现</span>
+                            <button type="button" class="tag-remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="tag-item" data-category="basis">
+                            <span class="tag-text">血流信号正常</span>
+                            <button type="button" class="tag-remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tag-input-group" id="basisInputGroup" style="display: none;">
+                        <input type="text" class="tag-input" placeholder="输入诊断依据" maxlength="50">
+                        <button type="button" class="tag-confirm-btn">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button type="button" class="tag-cancel-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="preset-tags">
+                        <span class="preset-label">常用依据：</span>
+                        <button type="button" class="preset-tag" data-text="大小稳定">大小稳定</button>
+                        <button type="button" class="preset-tag" data-text="形态不规则">形态不规则</button>
+                        <button type="button" class="preset-tag" data-text="周围组织浸润">周围组织浸润</button>
+                        <button type="button" class="preset-tag" data-text="淋巴结肿大">淋巴结肿大</button>
+                        <button type="button" class="preset-tag" data-text="增强扫描异常">增强扫描异常</button>
+                    </div>
+                </section>
+
+                <!-- 最终诊断 -->
+                <section class="form-section">
+                    <h2><i class="fas fa-diagnoses"></i> 最终诊断</h2>
+                    <div class="diagnosis-grid">
+                        <div class="diagnosis-category">
+                            <h3>诊断分类</h3>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="diagnosisType" value="benign" required>
+                                    <span class="radio-custom"></span>
+                                    良性
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diagnosisType" value="malignant" required>
+                                    <span class="radio-custom"></span>
+                                    恶性
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diagnosisType" value="uncertain" required>
+                                    <span class="radio-custom"></span>
+                                    未定
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="diagnosisType" value="other" required>
+                                    <span class="radio-custom"></span>
+                                    其他
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="diagnosis-detail">
+                            <h3>详细诊断</h3>
+                            <input
+                                type="text"
+                                id="detailedDiagnosis"
+                                name="detailedDiagnosis"
+                                placeholder="例如：良性结节，BRADS 3类"
+                                required
+                            >
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 提交按钮 -->
+                <section class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="previewBtn">
+                        <i class="fas fa-eye"></i> 预览数据
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> 保存数据
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="resetBtn">
+                        <i class="fas fa-redo"></i> 重置表单
+                    </button>
+                    </section>
+                    </form>
+                </div>
+
+                <!-- 数据管理页面 -->
+                <div id="data-management-page" class="page-content">
+                    <div class="page-header">
+                        <h2>数据管理</h2>
+                        <div class="page-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-plus"></i> 新增数据
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-download"></i> 导出数据
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="data-table-container">
+                        <div class="table-filters">
+                            <div class="filter-group">
+                                <label>图像类型：</label>
+                                <select class="filter-select">
+                                    <option value="">全部</option>
+                                    <option value="ultrasound">乳腺超声</option>
+                                    <option value="ct">CT</option>
+                                    <option value="mri">MRI</option>
+                                    <option value="xray">X光</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>诊断状态：</label>
+                                <select class="filter-select">
+                                    <option value="">全部</option>
+                                    <option value="completed">已完成</option>
+                                    <option value="pending">待处理</option>
+                                    <option value="reviewing">审核中</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>搜索：</label>
+                                <input type="text" class="filter-input" placeholder="搜索患者ID或诊断内容">
+                            </div>
+                        </div>
+
+                        <div class="data-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>图像类型</th>
+                                        <th>上传时间</th>
+                                        <th>诊断分类</th>
+                                        <th>详细诊断</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dataTableBody">
+                                    <tr>
+                                        <td>001</td>
+                                        <td>乳腺超声</td>
+                                        <td>2024-01-15 14:30</td>
+                                        <td><span class="status-badge status-benign">良性</span></td>
+                                        <td>良性结节，BRADS 3类</td>
+                                        <td><span class="status-badge status-completed">已完成</span></td>
+                                        <td>
+                                            <button class="action-btn view-btn" title="查看">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-btn edit-btn" title="编辑">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-btn delete-btn" title="删除">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>002</td>
+                                        <td>CT</td>
+                                        <td>2024-01-15 15:45</td>
+                                        <td><span class="status-badge status-uncertain">未定</span></td>
+                                        <td>需要进一步检查</td>
+                                        <td><span class="status-badge status-reviewing">审核中</span></td>
+                                        <td>
+                                            <button class="action-btn view-btn" title="查看">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-btn edit-btn" title="编辑">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-btn delete-btn" title="删除">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="table-pagination">
+                            <div class="pagination-info">
+                                显示 1-10 条，共 156 条记录
+                            </div>
+                            <div class="pagination-controls">
+                                <button class="pagination-btn" disabled>
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="pagination-btn active">1</button>
+                                <button class="pagination-btn">2</button>
+                                <button class="pagination-btn">3</button>
+                                <button class="pagination-btn">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图像分析页面 - 现代化医学AI标注系统 -->
+                <div id="image-analysis-page" class="page-content">
+                    <!-- 现代化工作区 -->
+                    <div class="modern-workspace">
+                        <!-- 左侧面板：病例输入 -->
+                        <div class="modern-panel left-panel">
+                            <div class="panel-header">
+                                <h2 class="panel-title">
+                                    <i class="fas fa-edit"></i>
+                                    病例输入
+                                </h2>
+                            </div>
+                            <div class="panel-content">
+                                <!-- 临床症状描述 -->
+                                <div class="form-group">
+                                    <label class="form-label">临床症状描述</label>
+                                    <textarea
+                                        class="modern-textarea"
+                                        id="clinicalQuestion"
+                                        placeholder="请详细描述患者的临床症状、病史及检查目的...&#10;&#10;例如：患者女性，45岁，主诉右乳肿块2周，质地较硬，边界不清，无疼痛。既往无乳腺疾病史，家族史无特殊。"
+                                    ></textarea>
+                                </div>
+
+                                <!-- 医学影像上传 -->
+                                <div class="form-group">
+                                    <label class="form-label">医学影像上传</label>
+                                    <div class="modern-upload-area" id="annotationUploadArea">
+                                        <div class="upload-content" id="uploadPlaceholder">
+                                            <div class="upload-icon">
+                                                <i class="fas fa-cloud-upload-alt"></i>
+                                            </div>
+                                            <div class="upload-text">点击上传或拖拽文件至此</div>
+                                            <div class="upload-hint">支持 JPG、PNG、DICOM 格式</div>
+                                            <input type="file" id="annotationImageInput" accept=".jpg,.jpeg,.png,.dcm,.dicom" multiple hidden>
+                                        </div>
+
+                                        <!-- 缩略图网格 -->
+                                        <div class="thumbnail-grid" id="uploadedImagesList" style="display: none;">
+                                            <div class="thumbnail-list" id="thumbnailList">
+                                                <!-- 缩略图将在这里动态生成 -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 智能分析流程 -->
+                                <div class="workflow-card">
+                                    <div class="workflow-header">
+                                        <i class="fas fa-robot"></i>
+                                        <span>智能分析流程</span>
+                                    </div>
+                                    <div class="workflow-steps">
+                                        <ol>
+                                            <li>上传图像后AI自动识别关键区域</li>
+                                            <li>确认或调整AI建议的标注</li>
+                                            <li>添加个人专业标注</li>
+                                            <li>获取智能诊断建议</li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                                <!-- 操作按钮 -->
+                                <div class="action-group">
+                                    <button class="modern-btn primary" id="startAnalysisBtn">
+                                        <i class="fas fa-brain"></i>
+                                        开始AI分析
+                                    </button>
+                                    <button class="modern-btn secondary" id="clearInputBtn">
+                                        <i class="fas fa-refresh"></i>
+                                        重置所有
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 中间面板：影像分析 -->
+                        <div class="modern-panel center-panel">
+                            <div class="modern-image-header">
+                                <h2 class="modern-image-title">
+                                    <i class="fas fa-image"></i>
+                                    影像分析
+                                </h2>
+                                <div class="modern-image-controls" id="imageControls" style="display: none;">
+                                    <button class="modern-control-btn" id="prevImageBtn" title="上一张">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <span class="modern-image-counter" id="imageCounter">1 / 1</span>
+                                    <button class="modern-control-btn" id="nextImageBtn" title="下一张">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+
+                                    <!-- 图像缩放控制 -->
+                                    <div class="image-zoom-controls">
+                                        <button class="zoom-btn" id="zoomOutBtn" title="缩小">
+                                            <i class="fas fa-search-minus"></i>
+                                        </button>
+                                        <span class="zoom-level" id="zoomLevel">100%</span>
+                                        <button class="zoom-btn" id="zoomInBtn" title="放大">
+                                            <i class="fas fa-search-plus"></i>
+                                        </button>
+                                        <button class="zoom-btn" id="resetZoomBtn" title="重置缩放">
+                                            <i class="fas fa-expand-arrows-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 图像工作区 -->
+                            <div class="image-workspace" id="imageWorkspace" style="display: none;">
+                                <div class="modern-image-container">
+                                    <canvas class="modern-annotation-canvas" id="annotationCanvas"></canvas>
+                                    <img class="modern-current-image" id="currentImage" alt="医学图像">
+                                </div>
+
+                                <!-- 标注工具栏 -->
+                                <div class="modern-annotation-toolbar">
+                                    <div class="modern-tool-group">
+                                        <button class="modern-tool-btn active" data-tool="select" title="选择">
+                                            <i class="fas fa-mouse-pointer"></i>
+                                        </button>
+                                        <button class="modern-tool-btn" data-tool="rectangle" title="矩形标注">
+                                            <i class="fas fa-square"></i>
+                                        </button>
+                                        <button class="modern-tool-btn" data-tool="arrow" title="箭头指向">
+                                            <i class="fas fa-location-arrow"></i>
+                                        </button>
+                                        <button class="modern-tool-btn" data-tool="text" title="文本标注">
+                                            <i class="fas fa-font"></i>
+                                        </button>
+                                    </div>
+                                    <div class="modern-toolbar-actions">
+                                        <button class="modern-btn secondary" id="undoAnnotationBtn" title="撤销">
+                                            <i class="fas fa-undo"></i>
+                                        </button>
+                                        <button class="modern-btn secondary" id="clearAnnotationsBtn" title="清除标注">
+                                            <i class="fas fa-eraser"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 空状态 -->
+                            <div class="modern-empty-state" id="emptyState">
+                                <div class="modern-empty-icon">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div class="modern-empty-title">请上传医学图像</div>
+                                <div class="modern-empty-description">上传图像后，AI将自动进行分析并建议标注位置</div>
+                            </div>
+
+                            <!-- 可折叠的分析结果区域 -->
+                            <div class="collapsible-analysis-section" id="analysisSection" style="display: none;">
+                                <div class="analysis-toggle-header" id="analysisToggleHeader">
+                                    <div class="toggle-title">
+                                        <i class="fas fa-brain"></i>
+                                        <span>AI分析结果</span>
+                                        <div class="modern-status-badge status-waiting" id="thinkingStatus">等待分析</div>
+                                    </div>
+                                    <button class="toggle-btn" id="analysisToggleBtn">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+
+                                <div class="analysis-content-wrapper" id="analysisContentWrapper" style="display: none;">
+                                    <div class="modern-analysis-section">
+                                        <!-- AI思考 -->
+                                        <div class="modern-analysis-card">
+                                            <div class="modern-analysis-header">
+                                                <h3 class="modern-analysis-title">
+                                                    <i class="fas fa-brain"></i>
+                                                    AI分析思路
+                                                </h3>
+                                            </div>
+                                            <div class="modern-analysis-content" id="thinkingContent">
+                                                <div class="modern-analysis-placeholder">
+                                                    <i class="fas fa-lightbulb"></i>
+                                                    <p>上传图像并开始分析后，AI的思考过程将在此显示</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- AI回答 -->
+                                        <div class="modern-analysis-card">
+                                            <div class="modern-analysis-header">
+                                                <h3 class="modern-analysis-title">
+                                                    <i class="fas fa-stethoscope"></i>
+                                                    诊断建议
+                                                </h3>
+                                                <div class="modern-toolbar-actions">
+                                                    <button class="modern-btn secondary" id="copyAnswerBtn" title="复制结果">
+                                                        <i class="fas fa-copy"></i>
+                                                    </button>
+                                                    <button class="modern-btn secondary" id="exportAnswerBtn" title="导出报告">
+                                                        <i class="fas fa-download"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="modern-analysis-content" id="answerContent">
+                                                <div class="modern-analysis-placeholder">
+                                                    <i class="fas fa-clipboard-list"></i>
+                                                    <p>AI分析完成后，诊断建议和治疗方案将在此显示</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 右侧面板：标注管理 -->
+                        <div class="modern-panel right-panel">
+                            <div class="panel-header">
+                                <h2 class="panel-title">
+                                    <i class="fas fa-tags"></i>
+                                    标注管理
+                                </h2>
+                            </div>
+                            <div class="panel-content">
+                                <!-- 标注列表 -->
+                                <div class="modern-annotation-section">
+                                    <div class="modern-section-header">
+                                        <h3 class="modern-section-title">当前标注</h3>
+                                        <span class="modern-annotation-count" id="annotationCount">0</span>
+                                    </div>
+                                    <div class="modern-annotation-list" id="annotationList">
+                                        <div class="modern-annotation-empty">
+                                            <i class="fas fa-tags"></i>
+                                            <p>暂无标注</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 快速操作 -->
+                                <div class="modern-quick-actions">
+                                    <div class="modern-section-header">
+                                        <h3 class="modern-section-title">快速操作</h3>
+                                    </div>
+                                    <div class="modern-quick-actions-content">
+                                        <button class="modern-quick-btn" id="confirmAllBtn">
+                                            <i class="fas fa-check-double"></i>
+                                            <span>确认所有AI标注</span>
+                                        </button>
+                                        <button class="modern-quick-btn" id="clearAllBtn">
+                                            <i class="fas fa-trash-alt"></i>
+                                            <span>清除所有标注</span>
+                                        </button>
+                                        <button class="modern-quick-btn" id="exportAnnotationsBtn">
+                                            <i class="fas fa-file-export"></i>
+                                            <span>导出标注数据</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="diagnosis-review-page" class="page-content">
+                    <div class="page-header">
+                        <h2>诊断审核</h2>
+                        <p class="page-description">诊断结果审核和质量控制</p>
+                    </div>
+                    <div class="coming-soon">
+                        <i class="fas fa-clipboard-check"></i>
+                        <h3>功能开发中</h3>
+                        <p>诊断审核功能正在开发中，敬请期待</p>
+                    </div>
+                </div>
+
+                <div id="reports-page" class="page-content">
+                    <div class="page-header">
+                        <h2>统计报告</h2>
+                        <p class="page-description">数据统计和分析报告</p>
+                    </div>
+                    <div class="coming-soon">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>功能开发中</h3>
+                        <p>统计报告功能正在开发中，敬请期待</p>
+                    </div>
+                </div>
+
+                <!-- 模型评分页面 -->
+                <div id="model-scoring-page" class="page-content">
+                    <div class="page-header">
+                        <h2>医学AI模型评分</h2>
+                        <p class="page-description">基于Likert 5分制的多维度质量评估系统</p>
+                    </div>
+
+                    <!-- 模型评分内容容器 -->
+                    <div id="modelScoringContainer">
+                        <!-- 评分内容将通过JavaScript动态加载 -->
+                        <div class="loading-placeholder">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>正在加载评分系统...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="settings-page" class="page-content">
+                    <div class="page-header">
+                        <h2>系统设置</h2>
+                        <p class="page-description">系统配置和参数设置</p>
+                    </div>
+                    <div class="coming-soon">
+                        <i class="fas fa-cog"></i>
+                        <h3>功能开发中</h3>
+                        <p>系统设置功能正在开发中，敬请期待</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 预览模态框 -->
+    <div id="previewModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>数据预览</h2>
+                <button class="close-btn" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="previewContent">
+                <!-- 预览内容将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

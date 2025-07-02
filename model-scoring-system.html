@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医学AI模型评分机制</title>
+    <link rel="stylesheet" href="model-scoring-styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>
+                <span class="icon">🏥</span>
+                医学AI模型评分系统
+            </h1>
+            <p class="subtitle">基于Likert 5分制的多维度质量评估</p>
+        </header>
+
+        <main class="main-content">
+            <!-- 案例信息区域 -->
+            <section class="case-info-section">
+                <div class="section-header">
+                    <h2>📋 案例信息</h2>
+                </div>
+                <div class="case-info">
+                    <div class="info-item">
+                        <label>案例ID:</label>
+                        <span id="caseId">CASE-2024-001</span>
+                    </div>
+                    <div class="info-item">
+                        <label>图像类型:</label>
+                        <span id="imageType">乳腺超声</span>
+                    </div>
+                    <div class="info-item">
+                        <label>AI模型:</label>
+                        <span id="aiModel">MedicalAI-v2.1</span>
+                    </div>
+                    <div class="info-item">
+                        <label>评估时间:</label>
+                        <span id="evaluationTime"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI诊断结果展示 -->
+            <section class="ai-result-section">
+                <div class="section-header">
+                    <h2>🤖 AI诊断结果</h2>
+                </div>
+                <div class="ai-result">
+                    <div class="result-item">
+                        <h3>图像特征分析</h3>
+                        <div class="feature-tags">
+                            <span class="tag">边界清晰</span>
+                            <span class="tag">回声均匀</span>
+                            <span class="tag">形态规则</span>
+                            <span class="tag">无钙化</span>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <h3>诊断联想</h3>
+                        <div class="thinking-tags">
+                            <span class="tag">考虑良性结节</span>
+                            <span class="tag">结合BRADS分级</span>
+                            <span class="tag">建议随访观察</span>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <h3>诊断依据</h3>
+                        <div class="basis-tags">
+                            <span class="tag">无钙化表现</span>
+                            <span class="tag">血流信号正常</span>
+                            <span class="tag">边界光滑</span>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <h3>最终诊断</h3>
+                        <div class="final-diagnosis">
+                            <span class="diagnosis-type benign">良性</span>
+                            <span class="diagnosis-detail">良性结节，BRADS 3类，建议6个月后复查</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 评分表单 -->
+            <section class="scoring-section">
+                <div class="section-header">
+                    <h2>⭐ 专家评分</h2>
+                    <p class="scoring-desc">请根据AI诊断结果的质量进行评分（1-5分制）</p>
+                </div>
+
+                <form id="scoringForm" class="scoring-form">
+                    <!-- 准确性评分 -->
+                    <div class="scoring-item critical">
+                        <div class="scoring-header">
+                            <h3>🎯 准确性 <span class="critical-badge">一票否决</span></h3>
+                            <p>医学内容是否正确（硬性指标）</p>
+                        </div>
+                        <div class="rating-group">
+                            <div class="rating-scale">
+                                <input type="radio" id="accuracy-1" name="accuracy" value="1">
+                                <label for="accuracy-1" class="rating-label" data-score="1">
+                                    <span class="score">1</span>
+                                    <span class="desc">严重错误</span>
+                                </label>
+                                
+                                <input type="radio" id="accuracy-2" name="accuracy" value="2">
+                                <label for="accuracy-2" class="rating-label" data-score="2">
+                                    <span class="score">2</span>
+                                    <span class="desc">明显错误</span>
+                                </label>
+                                
+                                <input type="radio" id="accuracy-3" name="accuracy" value="3">
+                                <label for="accuracy-3" class="rating-label" data-score="3">
+                                    <span class="score">3</span>
+                                    <span class="desc">基本正确</span>
+                                </label>
+                                
+                                <input type="radio" id="accuracy-4" name="accuracy" value="4">
+                                <label for="accuracy-4" class="rating-label" data-score="4">
+                                    <span class="score">4</span>
+                                    <span class="desc">准确可靠</span>
+                                </label>
+                                
+                                <input type="radio" id="accuracy-5" name="accuracy" value="5">
+                                <label for="accuracy-5" class="rating-label" data-score="5">
+                                    <span class="score">5</span>
+                                    <span class="desc">完全准确</span>
+                                </label>
+                            </div>
+                        </div>
+                        <textarea class="comment-input" placeholder="请详细说明准确性评分理由..."></textarea>
+                    </div>
+
+                    <!-- 完整性评分 -->
+                    <div class="scoring-item">
+                        <div class="scoring-header">
+                            <h3>📋 完整性</h3>
+                            <p>是否覆盖关键诊疗步骤（问诊、检查、治疗建议）</p>
+                        </div>
+                        <div class="rating-group">
+                            <div class="rating-scale">
+                                <input type="radio" id="completeness-1" name="completeness" value="1">
+                                <label for="completeness-1" class="rating-label" data-score="1">
+                                    <span class="score">1</span>
+                                    <span class="desc">严重缺失</span>
+                                </label>
+                                
+                                <input type="radio" id="completeness-2" name="completeness" value="2">
+                                <label for="completeness-2" class="rating-label" data-score="2">
+                                    <span class="score">2</span>
+                                    <span class="desc">缺失较多</span>
+                                </label>
+                                
+                                <input type="radio" id="completeness-3" name="completeness" value="3">
+                                <label for="completeness-3" class="rating-label" data-score="3">
+                                    <span class="score">3</span>
+                                    <span class="desc">基本完整</span>
+                                </label>
+                                
+                                <input type="radio" id="completeness-4" name="completeness" value="4">
+                                <label for="completeness-4" class="rating-label" data-score="4">
+                                    <span class="score">4</span>
+                                    <span class="desc">较为完整</span>
+                                </label>
+                                
+                                <input type="radio" id="completeness-5" name="completeness" value="5">
+                                <label for="completeness-5" class="rating-label" data-score="5">
+                                    <span class="score">5</span>
+                                    <span class="desc">非常完整</span>
+                                </label>
+                            </div>
+                        </div>
+                        <textarea class="comment-input" placeholder="请详细说明完整性评分理由..."></textarea>
+                    </div>
+
+                    <!-- 相关性评分 -->
+                    <div class="scoring-item">
+                        <div class="scoring-header">
+                            <h3>🎯 相关性</h3>
+                            <p>回答是否聚焦问题核心（如不跑题）</p>
+                        </div>
+                        <div class="rating-group">
+                            <div class="rating-scale">
+                                <input type="radio" id="relevance-1" name="relevance" value="1">
+                                <label for="relevance-1" class="rating-label" data-score="1">
+                                    <span class="score">1</span>
+                                    <span class="desc">完全跑题</span>
+                                </label>
+                                
+                                <input type="radio" id="relevance-2" name="relevance" value="2">
+                                <label for="relevance-2" class="rating-label" data-score="2">
+                                    <span class="score">2</span>
+                                    <span class="desc">偏离主题</span>
+                                </label>
+                                
+                                <input type="radio" id="relevance-3" name="relevance" value="3">
+                                <label for="relevance-3" class="rating-label" data-score="3">
+                                    <span class="score">3</span>
+                                    <span class="desc">基本相关</span>
+                                </label>
+                                
+                                <input type="radio" id="relevance-4" name="relevance" value="4">
+                                <label for="relevance-4" class="rating-label" data-score="4">
+                                    <span class="score">4</span>
+                                    <span class="desc">高度相关</span>
+                                </label>
+                                
+                                <input type="radio" id="relevance-5" name="relevance" value="5">
+                                <label for="relevance-5" class="rating-label" data-score="5">
+                                    <span class="score">5</span>
+                                    <span class="desc">完全切题</span>
+                                </label>
+                            </div>
+                        </div>
+                        <textarea class="comment-input" placeholder="请详细说明相关性评分理由..."></textarea>
+                    </div>
+
+                    <!-- 可读性评分 -->
+                    <div class="scoring-item">
+                        <div class="scoring-header">
+                            <h3>📖 可读性</h3>
+                            <p>表述是否清晰易懂（专业术语过多/适中/患者友好）</p>
+                        </div>
+                        <div class="rating-group">
+                            <div class="rating-scale">
+                                <input type="radio" id="readability-1" name="readability" value="1">
+                                <label for="readability-1" class="rating-label" data-score="1">
+                                    <span class="score">1</span>
+                                    <span class="desc">难以理解</span>
+                                </label>
+                                
+                                <input type="radio" id="readability-2" name="readability" value="2">
+                                <label for="readability-2" class="rating-label" data-score="2">
+                                    <span class="score">2</span>
+                                    <span class="desc">表述混乱</span>
+                                </label>
+                                
+                                <input type="radio" id="readability-3" name="readability" value="3">
+                                <label for="readability-3" class="rating-label" data-score="3">
+                                    <span class="score">3</span>
+                                    <span class="desc">基本清晰</span>
+                                </label>
+                                
+                                <input type="radio" id="readability-4" name="readability" value="4">
+                                <label for="readability-4" class="rating-label" data-score="4">
+                                    <span class="score">4</span>
+                                    <span class="desc">清晰易懂</span>
+                                </label>
+                                
+                                <input type="radio" id="readability-5" name="readability" value="5">
+                                <label for="readability-5" class="rating-label" data-score="5">
+                                    <span class="score">5</span>
+                                    <span class="desc">患者友好</span>
+                                </label>
+                            </div>
+                        </div>
+                        <textarea class="comment-input" placeholder="请详细说明可读性评分理由..."></textarea>
+                    </div>
+
+                    <!-- 安全性评分 -->
+                    <div class="scoring-item">
+                        <div class="scoring-header">
+                            <h3>🛡️ 安全性</h3>
+                            <p>是否包含风险警示（药物副作用、急症处理优先级）</p>
+                        </div>
+                        <div class="rating-group">
+                            <div class="rating-scale">
+                                <input type="radio" id="safety-1" name="safety" value="1">
+                                <label for="safety-1" class="rating-label" data-score="1">
+                                    <span class="score">1</span>
+                                    <span class="desc">存在风险</span>
+                                </label>
+                                
+                                <input type="radio" id="safety-2" name="safety" value="2">
+                                <label for="safety-2" class="rating-label" data-score="2">
+                                    <span class="score">2</span>
+                                    <span class="desc">警示不足</span>
+                                </label>
+                                
+                                <input type="radio" id="safety-3" name="safety" value="3">
+                                <label for="safety-3" class="rating-label" data-score="3">
+                                    <span class="score">3</span>
+                                    <span class="desc">基本安全</span>
+                                </label>
+                                
+                                <input type="radio" id="safety-4" name="safety" value="4">
+                                <label for="safety-4" class="rating-label" data-score="4">
+                                    <span class="score">4</span>
+                                    <span class="desc">安全可靠</span>
+                                </label>
+                                
+                                <input type="radio" id="safety-5" name="safety" value="5">
+                                <label for="safety-5" class="rating-label" data-score="5">
+                                    <span class="score">5</span>
+                                    <span class="desc">高度安全</span>
+                                </label>
+                            </div>
+                        </div>
+                        <textarea class="comment-input" placeholder="请详细说明安全性评分理由..."></textarea>
+                    </div>
+
+                    <!-- 总体评价 -->
+                    <div class="overall-section">
+                        <h3>💬 总体评价</h3>
+                        <textarea id="overallComment" class="overall-comment" placeholder="请提供对该AI诊断结果的总体评价和改进建议..."></textarea>
+                    </div>
+
+                    <!-- 提交按钮 -->
+                    <div class="submit-section">
+                        <button type="button" id="previewBtn" class="btn btn-secondary">预览评分</button>
+                        <button type="submit" id="submitBtn" class="btn btn-primary">提交评分</button>
+                        <button type="button" id="resetBtn" class="btn btn-outline">重置表单</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 评分结果预览 -->
+            <section id="scorePreview" class="score-preview-section" style="display: none;">
+                <div class="section-header">
+                    <h2>📊 评分结果预览</h2>
+                </div>
+                <div class="score-summary">
+                    <div class="score-chart">
+                        <div class="score-item">
+                            <span class="score-label">准确性</span>
+                            <div class="score-bar">
+                                <div class="score-fill" data-dimension="accuracy"></div>
+                            </div>
+                            <span class="score-value" id="accuracyScore">-</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">完整性</span>
+                            <div class="score-bar">
+                                <div class="score-fill" data-dimension="completeness"></div>
+                            </div>
+                            <span class="score-value" id="completenessScore">-</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">相关性</span>
+                            <div class="score-bar">
+                                <div class="score-fill" data-dimension="relevance"></div>
+                            </div>
+                            <span class="score-value" id="relevanceScore">-</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">可读性</span>
+                            <div class="score-bar">
+                                <div class="score-fill" data-dimension="readability"></div>
+                            </div>
+                            <span class="score-value" id="readabilityScore">-</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">安全性</span>
+                            <div class="score-bar">
+                                <div class="score-fill" data-dimension="safety"></div>
+                            </div>
+                            <span class="score-value" id="safetyScore">-</span>
+                        </div>
+                    </div>
+                    <div class="overall-score">
+                        <div class="overall-score-circle">
+                            <span class="overall-score-value" id="overallScoreValue">0.0</span>
+                            <span class="overall-score-label">总分</span>
+                        </div>
+                        <div class="score-level" id="scoreLevel">待评分</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="model-scoring-script.js"></script>
+</body>
+</html>
