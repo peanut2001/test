@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="admin-layout">
         <!-- 侧边栏 -->
@@ -109,7 +111,8 @@
                         </button>
                         <div class="user-menu">
                             <button class="user-menu-btn">
-                                <img src="https://via.placeholder.com/32x32/4CAF50/ffffff?text=张" alt="用户头像" class="user-avatar-small">
+                                <img src="https://via.placeholder.com/32x32/4CAF50/ffffff?text=张" alt="用户头像"
+                                    class="user-avatar-small">
                                 <span class="user-name-small">张医生</span>
                                 <i class="fas fa-chevron-down"></i>
                             </button>
@@ -199,216 +202,305 @@
                     </div>
 
                     <form id="medicalDataForm" class="data-form">
-                <!-- 图像上传区域 -->
-                <section class="form-section">
-                    <h2><i class="fas fa-upload"></i> 图像文件上传</h2>
-                    <div class="upload-area" id="uploadArea">
-                        <div class="upload-placeholder">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>点击或拖拽上传医学图像</p>
-                            <p class="file-types">支持格式：JPG, PNG, DICOM, AVI</p>
-                        </div>
-                        <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,.dcm,.dicom,.avi" hidden>
-                        <div class="image-preview" id="imagePreview" style="display: none;">
-                            <img id="previewImg" src="" alt="预览图像">
-                            <div class="image-info">
-                                <span id="fileName"></span>
-                                <button type="button" class="remove-btn" id="removeImage">
+                        <!-- 图像上传区域 -->
+                        <section class="form-section">
+                            <h2><i class="fas fa-upload"></i> 图像文件上传</h2>
+                            <div class="upload-area" id="uploadArea">
+                                <div class="upload-placeholder">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>点击或拖拽上传医学图像</p>
+                                    <p class="file-types">支持格式：JPG, PNG, DICOM, AVI</p>
+                                </div>
+                                <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,.dcm,.dicom,.avi" hidden>
+                                <div class="image-preview" id="imagePreview" style="display: none;">
+                                    <img id="previewImg" src="" alt="预览图像">
+                                    <div class="image-info">
+                                        <span id="fileName"></span>
+                                        <button type="button" class="remove-btn" id="removeImage">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 基础信息录入 -->
+                        <section class="form-section">
+                            <h2><i class="fas fa-info-circle"></i> 基础信息</h2>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="bodyPart">检查部位</label>
+                                    <select id="bodyPart" name="bodyPart" required>
+                                        <option value="">请选择检查部位</option>
+                                        <option value="breast">乳腺</option>
+                                        <option value="thyroid">甲状腺</option>
+                                        <option value="liver">肝脏</option>
+                                        <option value="kidney">肾脏</option>
+                                        <option value="heart">心脏</option>
+                                        <option value="lung">肺部</option>
+                                        <option value="abdomen">腹部</option>
+                                        <option value="pelvis">盆腔</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="crossSection">切面类型</label>
+                                    <select id="crossSection" name="crossSection" required>
+                                        <option value="">请选择切面类型</option>
+                                        <option value="sagittal">矢状面</option>
+                                        <option value="coronal">冠状面</option>
+                                        <option value="axial">横断面</option>
+                                        <option value="oblique">斜切面</option>
+                                        <option value="longitudinal">纵切面</option>
+                                        <option value="transverse">横切面</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 标注管理选项 -->
+                        <section class="form-section" id="annotationSection" style="display: none;">
+                            <h2><i class="fas fa-edit"></i> 标注管理</h2>
+                            <div class="annotation-option">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableAnnotation" name="enableAnnotation">
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-text">进行图像标注</span>
+                                </label>
+                                <p class="option-description">选择此项将打开标注工具，可以在图像上标记病灶区域</p>
+                            </div>
+
+                            <!-- 标注工具区域 -->
+                            <div class="annotation-tools" id="annotationTools" style="display: none;">
+                                <div class="form-group">
+                                    <label for="lesionType">病灶类型</label>
+                                    <select id="lesionType" name="lesionType">
+                                        <option value="">请选择病灶类型</option>
+                                        <option value="nodule">结节</option>
+                                        <option value="mass">肿块</option>
+                                        <option value="cyst">囊肿</option>
+                                        <option value="calcification">钙化</option>
+                                        <option value="inflammation">炎症</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                                <div class="annotation-hint">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>请在上传的图像上使用标注工具标记相应的病灶区域</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 图像特征分析 -->
+                        <section class="form-section">
+                            <div class="section-header">
+                                <h2><i class="fas fa-search"></i> 图像特征分析</h2>
+                                <button type="button" class="add-item-btn" id="addFeatureBtn">
+                                    <i class="fas fa-plus"></i> 添加特征
+                                </button>
+                            </div>
+                            <div class="tags-container" id="featuresContainer">
+                                <!-- 预设一些常见特征 -->
+                                <div class="tag-item" data-category="features">
+                                    <span class="tag-text">边界清晰</span>
+                                    <button type="button" class="tag-remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="tag-item" data-category="features">
+                                    <span class="tag-text">回声均匀</span>
+                                    <button type="button" class="tag-remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="tag-item" data-category="features">
+                                    <span class="tag-text">形态规则</span>
+                                    <button type="button" class="tag-remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="tag-input-group" id="featureInputGroup" style="display: none;">
+                                <input type="text" class="tag-input" placeholder="输入图像特征描述" maxlength="50">
+                                <button type="button" class="tag-confirm-btn">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button type="button" class="tag-cancel-btn">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 图像特征分析 -->
-                <section class="form-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-search"></i> 图像特征分析</h2>
-                        <button type="button" class="add-item-btn" id="addFeatureBtn">
-                            <i class="fas fa-plus"></i> 添加特征
-                        </button>
-                    </div>
-                    <div class="tags-container" id="featuresContainer">
-                        <!-- 预设一些常见特征 -->
-                        <div class="tag-item" data-category="features">
-                            <span class="tag-text">边界清晰</span>
-                            <button type="button" class="tag-remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="tag-item" data-category="features">
-                            <span class="tag-text">回声均匀</span>
-                            <button type="button" class="tag-remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="tag-item" data-category="features">
-                            <span class="tag-text">形态规则</span>
-                            <button type="button" class="tag-remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="tag-input-group" id="featureInputGroup" style="display: none;">
-                        <input type="text" class="tag-input" placeholder="输入图像特征描述" maxlength="50">
-                        <button type="button" class="tag-confirm-btn">
-                            <i class="fas fa-check"></i>
-                        </button>
-                        <button type="button" class="tag-cancel-btn">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="preset-tags">
-                        <span class="preset-label">常用特征：</span>
-                        <button type="button" class="preset-tag" data-text="低回声区">低回声区</button>
-                        <button type="button" class="preset-tag" data-text="高回声区">高回声区</button>
-                        <button type="button" class="preset-tag" data-text="混合回声">混合回声</button>
-                        <button type="button" class="preset-tag" data-text="边界模糊">边界模糊</button>
-                        <button type="button" class="preset-tag" data-text="钙化灶">钙化灶</button>
-                        <button type="button" class="preset-tag" data-text="血流信号">血流信号</button>
-                    </div>
-                </section>
-
-                <!-- 诊断联想 -->
-                <section class="form-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-brain"></i> 诊断联想</h2>
-                        <button type="button" class="add-item-btn" id="addThinkingBtn">
-                            <i class="fas fa-plus"></i> 添加联想
-                        </button>
-                    </div>
-                    <div class="tags-container" id="thinkingContainer">
-                        <!-- 预设一些诊断联想 -->
-                        <div class="tag-item" data-category="thinking">
-                            <span class="tag-text">考虑良性结节</span>
-                            <button type="button" class="tag-remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="tag-item" data-category="thinking">
-                            <span class="tag-text">结合BRADS分级</span>
-                            <button type="button" class="tag-remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="tag-input-group" id="thinkingInputGroup" style="display: none;">
-                        <input type="text" class="tag-input" placeholder="输入诊断联想内容" maxlength="50">
-                        <button type="button" class="tag-confirm-btn">
-                            <i class="fas fa-check"></i>
-                        </button>
-                        <button type="button" class="tag-cancel-btn">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="preset-tags">
-                        <span class="preset-label">常用联想：</span>
-                        <button type="button" class="preset-tag" data-text="需要进一步检查">需要进一步检查</button>
-                        <button type="button" class="preset-tag" data-text="建议定期复查">建议定期复查</button>
-                        <button type="button" class="preset-tag" data-text="考虑恶性可能">考虑恶性可能</button>
-                        <button type="button" class="preset-tag" data-text="典型良性表现">典型良性表现</button>
-                        <button type="button" class="preset-tag" data-text="需要病理确诊">需要病理确诊</button>
-                    </div>
-                </section>
-
-                <!-- 诊断依据 -->
-                <section class="form-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-clipboard-list"></i> 诊断依据</h2>
-                        <button type="button" class="add-item-btn" id="addBasisBtn">
-                            <i class="fas fa-plus"></i> 添加依据
-                        </button>
-                    </div>
-                    <div class="tags-container" id="basisContainer">
-                        <!-- 预设一些诊断依据 -->
-                        <div class="tag-item" data-category="basis">
-                            <span class="tag-text">无钙化表现</span>
-                            <button type="button" class="tag-remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="tag-item" data-category="basis">
-                            <span class="tag-text">血流信号正常</span>
-                            <button type="button" class="tag-remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="tag-input-group" id="basisInputGroup" style="display: none;">
-                        <input type="text" class="tag-input" placeholder="输入诊断依据" maxlength="50">
-                        <button type="button" class="tag-confirm-btn">
-                            <i class="fas fa-check"></i>
-                        </button>
-                        <button type="button" class="tag-cancel-btn">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="preset-tags">
-                        <span class="preset-label">常用依据：</span>
-                        <button type="button" class="preset-tag" data-text="大小稳定">大小稳定</button>
-                        <button type="button" class="preset-tag" data-text="形态不规则">形态不规则</button>
-                        <button type="button" class="preset-tag" data-text="周围组织浸润">周围组织浸润</button>
-                        <button type="button" class="preset-tag" data-text="淋巴结肿大">淋巴结肿大</button>
-                        <button type="button" class="preset-tag" data-text="增强扫描异常">增强扫描异常</button>
-                    </div>
-                </section>
-
-                <!-- 最终诊断 -->
-                <section class="form-section">
-                    <h2><i class="fas fa-diagnoses"></i> 最终诊断</h2>
-                    <div class="diagnosis-grid">
-                        <div class="diagnosis-category">
-                            <h3>诊断分类</h3>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="diagnosisType" value="benign" required>
-                                    <span class="radio-custom"></span>
-                                    良性
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diagnosisType" value="malignant" required>
-                                    <span class="radio-custom"></span>
-                                    恶性
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diagnosisType" value="uncertain" required>
-                                    <span class="radio-custom"></span>
-                                    未定
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="diagnosisType" value="other" required>
-                                    <span class="radio-custom"></span>
-                                    其他
-                                </label>
+                            <div class="preset-tags">
+                                <span class="preset-label">常用特征：</span>
+                                <button type="button" class="preset-tag" data-text="低回声区">低回声区</button>
+                                <button type="button" class="preset-tag" data-text="高回声区">高回声区</button>
+                                <button type="button" class="preset-tag" data-text="混合回声">混合回声</button>
+                                <button type="button" class="preset-tag" data-text="边界模糊">边界模糊</button>
+                                <button type="button" class="preset-tag" data-text="钙化灶">钙化灶</button>
+                                <button type="button" class="preset-tag" data-text="血流信号">血流信号</button>
                             </div>
-                        </div>
+                        </section>
 
-                        <div class="diagnosis-detail">
-                            <h3>详细诊断</h3>
-                            <input
-                                type="text"
-                                id="detailedDiagnosis"
-                                name="detailedDiagnosis"
-                                placeholder="例如：良性结节，BRADS 3类"
-                                required
-                            >
-                        </div>
-                    </div>
-                </section>
+                        <!-- 诊断联想 -->
+                        <section class="form-section">
+                            <div class="section-header">
+                                <h2><i class="fas fa-brain"></i> 诊断联想</h2>
+                                <button type="button" class="add-item-btn" id="addThinkingBtn">
+                                    <i class="fas fa-plus"></i> 添加联想
+                                </button>
+                            </div>
+                            <div class="tags-container" id="thinkingContainer">
+                                <!-- 预设一些诊断联想 -->
+                                <div class="tag-item" data-category="thinking">
+                                    <span class="tag-text">考虑良性结节</span>
+                                    <button type="button" class="tag-remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="tag-item" data-category="thinking">
+                                    <span class="tag-text">结合BRADS分级</span>
+                                    <button type="button" class="tag-remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="tag-input-group" id="thinkingInputGroup" style="display: none;">
+                                <input type="text" class="tag-input" placeholder="输入诊断联想内容" maxlength="50">
+                                <button type="button" class="tag-confirm-btn">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button type="button" class="tag-cancel-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="preset-tags">
+                                <span class="preset-label">常用联想：</span>
+                                <button type="button" class="preset-tag" data-text="需要进一步检查">需要进一步检查</button>
+                                <button type="button" class="preset-tag" data-text="建议定期复查">建议定期复查</button>
+                                <button type="button" class="preset-tag" data-text="考虑恶性可能">考虑恶性可能</button>
+                                <button type="button" class="preset-tag" data-text="典型良性表现">典型良性表现</button>
+                                <button type="button" class="preset-tag" data-text="需要病理确诊">需要病理确诊</button>
+                            </div>
+                        </section>
 
-                <!-- 提交按钮 -->
-                <section class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="previewBtn">
-                        <i class="fas fa-eye"></i> 预览数据
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> 保存数据
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="resetBtn">
-                        <i class="fas fa-redo"></i> 重置表单
-                    </button>
-                    </section>
+                        <!-- 诊断依据 -->
+                        <section class="form-section">
+                            <div class="section-header">
+                                <h2><i class="fas fa-clipboard-list"></i> 诊断依据</h2>
+                                <button type="button" class="add-item-btn" id="addBasisBtn">
+                                    <i class="fas fa-plus"></i> 添加依据
+                                </button>
+                            </div>
+                            <div class="tags-container" id="basisContainer">
+                                <!-- 预设一些诊断依据 -->
+                                <div class="tag-item" data-category="basis">
+                                    <span class="tag-text">无钙化表现</span>
+                                    <button type="button" class="tag-remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="tag-item" data-category="basis">
+                                    <span class="tag-text">血流信号正常</span>
+                                    <button type="button" class="tag-remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="tag-input-group" id="basisInputGroup" style="display: none;">
+                                <input type="text" class="tag-input" placeholder="输入诊断依据" maxlength="50">
+                                <button type="button" class="tag-confirm-btn">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button type="button" class="tag-cancel-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="preset-tags">
+                                <span class="preset-label">常用依据：</span>
+                                <button type="button" class="preset-tag" data-text="大小稳定">大小稳定</button>
+                                <button type="button" class="preset-tag" data-text="形态不规则">形态不规则</button>
+                                <button type="button" class="preset-tag" data-text="周围组织浸润">周围组织浸润</button>
+                                <button type="button" class="preset-tag" data-text="淋巴结肿大">淋巴结肿大</button>
+                                <button type="button" class="preset-tag" data-text="增强扫描异常">增强扫描异常</button>
+                            </div>
+                        </section>
+
+                        <!-- 诊断结果 -->
+                        <section class="form-section">
+                            <h2><i class="fas fa-diagnoses"></i> 诊断结果</h2>
+                            <div class="diagnosis-grid">
+                                <div class="diagnosis-category">
+                                    <h3>诊断分类</h3>
+                                    <div class="radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="diagnosisType" value="normal" required>
+                                            <span class="radio-custom"></span>
+                                            正常
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="diagnosisType" value="benign" required>
+                                            <span class="radio-custom"></span>
+                                            良性
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="diagnosisType" value="malignant" required>
+                                            <span class="radio-custom"></span>
+                                            恶性
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="diagnosisType" value="uncertain" required>
+                                            <span class="radio-custom"></span>
+                                            未定
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="diagnosisType" value="other" required>
+                                            <span class="radio-custom"></span>
+                                            其他
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- 诊断依据 - 仅在良性或恶性时显示 -->
+                        <section class="form-section" id="diagnosisBasisSection" style="display: none;">
+                            <h2><i class="fas fa-clipboard-list"></i> 诊断依据</h2>
+                            <div class="form-group">
+                                <textarea id="diagnosisBasis" name="diagnosisBasis"
+                                    placeholder="请详细描述诊断依据，如影像学特征、病理表现等..." rows="4"></textarea>
+                            </div>
+                        </section>
+
+                        <!-- 备注 - 仅在未定或其他时显示 -->
+                        <section class="form-section" id="remarksSection" style="display: none;">
+                            <h2><i class="fas fa-comment"></i> 备注说明</h2>
+                            <div class="form-group">
+                                <textarea id="remarks" name="remarks" placeholder="请说明选择未定或其他的原因..."
+                                    rows="3"></textarea>
+                            </div>
+                        </section>
+
+                        <!-- 病史信息 - 选填 -->
+                        <section class="form-section">
+                            <h2><i class="fas fa-history"></i> 病史信息 <span class="optional-label">(选填)</span></h2>
+                            <div class="form-group">
+                                <textarea id="medicalHistory" name="medicalHistory"
+                                    placeholder="如有完整病史信息，请在此填写，包括既往病史、家族史、用药史等..." rows="4"></textarea>
+                            </div>
+                        </section>
+
+                        <!-- 提交按钮 -->
+                        <section class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="previewBtn">
+                                <i class="fas fa-eye"></i> 预览数据
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> 保存数据
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="resetBtn">
+                                <i class="fas fa-redo"></i> 重置表单
+                            </button>
+                        </section>
                     </form>
                 </div>
 
@@ -544,11 +636,8 @@
                                 <!-- 临床症状描述 -->
                                 <div class="form-group">
                                     <label class="form-label">临床症状描述</label>
-                                    <textarea
-                                        class="modern-textarea"
-                                        id="clinicalQuestion"
-                                        placeholder="请详细描述患者的临床症状、病史及检查目的...&#10;&#10;例如：患者女性，45岁，主诉右乳肿块2周，质地较硬，边界不清，无疼痛。既往无乳腺疾病史，家族史无特殊。"
-                                    ></textarea>
+                                    <textarea class="modern-textarea" id="clinicalQuestion"
+                                        placeholder="请详细描述患者的临床症状、病史及检查目的...&#10;&#10;例如：患者女性，45岁，主诉右乳肿块2周，质地较硬，边界不清，无疼痛。既往无乳腺疾病史，家族史无特殊。"></textarea>
                                 </div>
 
                                 <!-- 医学影像上传 -->
@@ -561,7 +650,8 @@
                                             </div>
                                             <div class="upload-text">点击上传或拖拽文件至此</div>
                                             <div class="upload-hint">支持 JPG、PNG、DICOM 格式</div>
-                                            <input type="file" id="annotationImageInput" accept=".jpg,.jpeg,.png,.dcm,.dicom" multiple hidden>
+                                            <input type="file" id="annotationImageInput"
+                                                accept=".jpg,.jpeg,.png,.dcm,.dicom" multiple hidden>
                                         </div>
 
                                         <!-- 缩略图网格 -->
@@ -615,37 +705,55 @@
                                 </div>
                             </div>
 
+                            <!-- 标注工具栏 - 始终可见 -->
+                            <div class="modern-annotation-toolbar">
+                                <div class="modern-tool-group">
+                                    <button class="modern-tool-btn active" data-tool="select" title="选择工具">
+                                        <i class="fas fa-mouse-pointer"></i>
+                                        <span class="tool-label">选择</span>
+                                    </button>
+                                    <button class="modern-tool-btn" data-tool="rectangle" title="矩形标注框">
+                                        <i class="fas fa-square"></i>
+                                        <span class="tool-label">标注框</span>
+                                    </button>
+                                    <button class="modern-tool-btn" data-tool="circle" title="圆形标注">
+                                        <i class="fas fa-circle"></i>
+                                        <span class="tool-label">圆形</span>
+                                    </button>
+                                    <button class="modern-tool-btn" data-tool="arrow" title="箭头指示">
+                                        <i class="fas fa-location-arrow"></i>
+                                        <span class="tool-label">指示点</span>
+                                    </button>
+                                    <button class="modern-tool-btn" data-tool="text" title="文本标注">
+                                        <i class="fas fa-font"></i>
+                                        <span class="tool-label">文本框</span>
+                                    </button>
+                                    <button class="modern-tool-btn" data-tool="pen" title="自由绘制">
+                                        <i class="fas fa-pen"></i>
+                                        <span class="tool-label">画笔</span>
+                                    </button>
+                                </div>
+                                <div class="modern-toolbar-actions">
+                                    <button class="modern-btn secondary" id="undoAnnotationBtn" title="撤销上一步">
+                                        <i class="fas fa-undo"></i>
+                                        <span>撤销</span>
+                                    </button>
+                                    <button class="modern-btn secondary" id="clearAnnotationsBtn" title="清除所有标注">
+                                        <i class="fas fa-eraser"></i>
+                                        <span>清除</span>
+                                    </button>
+                                    <button class="modern-btn primary" id="saveAnnotationsBtn" title="保存标注">
+                                        <i class="fas fa-save"></i>
+                                        <span>保存</span>
+                                    </button>
+                                </div>
+                            </div>
+
                             <!-- 图像工作区 -->
                             <div class="image-workspace" id="imageWorkspace" style="display: none;">
                                 <div class="modern-image-container">
                                     <canvas class="modern-annotation-canvas" id="annotationCanvas"></canvas>
                                     <img class="modern-current-image" id="currentImage" alt="医学图像">
-                                </div>
-
-                                <!-- 标注工具栏 -->
-                                <div class="modern-annotation-toolbar">
-                                    <div class="modern-tool-group">
-                                        <button class="modern-tool-btn active" data-tool="select" title="选择">
-                                            <i class="fas fa-mouse-pointer"></i>
-                                        </button>
-                                        <button class="modern-tool-btn" data-tool="rectangle" title="矩形标注">
-                                            <i class="fas fa-square"></i>
-                                        </button>
-                                        <button class="modern-tool-btn" data-tool="arrow" title="箭头指向">
-                                            <i class="fas fa-location-arrow"></i>
-                                        </button>
-                                        <button class="modern-tool-btn" data-tool="text" title="文本标注">
-                                            <i class="fas fa-font"></i>
-                                        </button>
-                                    </div>
-                                    <div class="modern-toolbar-actions">
-                                        <button class="modern-btn secondary" id="undoAnnotationBtn" title="撤销">
-                                            <i class="fas fa-undo"></i>
-                                        </button>
-                                        <button class="modern-btn secondary" id="clearAnnotationsBtn" title="清除标注">
-                                            <i class="fas fa-eraser"></i>
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
 
@@ -776,4 +884,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
