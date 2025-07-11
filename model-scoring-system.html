@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>医学AI模型评分机制</title>
+    <title>医学模型评分机制</title>
     <link rel="stylesheet" href="model-scoring-styles.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
         <header class="header">
             <h1>
                 <span class="icon">🏥</span>
-                医学AI模型评分系统
+                医学模型评分系统
             </h1>
             <p class="subtitle">基于Likert 5分制的多维度质量评估</p>
         </header>
@@ -32,8 +32,8 @@
                         <span id="imageType">乳腺超声</span>
                     </div>
                     <div class="info-item">
-                        <label>AI模型:</label>
-                        <span id="aiModel">MedicalAI-v2.1</span>
+                        <label>分析模型:</label>
+                        <span id="analysisModel">Medical-v2.1</span>
                     </div>
                     <div class="info-item">
                         <label>评估时间:</label>
@@ -42,12 +42,12 @@
                 </div>
             </section>
 
-            <!-- AI诊断结果展示 -->
-            <section class="ai-result-section">
+            <!-- 诊断结果展示 -->
+            <section class="result-section">
                 <div class="section-header">
-                    <h2>🤖 AI诊断结果</h2>
+                    <h2>📋 诊断结果</h2>
                 </div>
-                <div class="ai-result">
+                <div class="result">
                     <div class="result-item">
                         <h3>图像特征分析</h3>
                         <div class="feature-tags">
@@ -87,7 +87,7 @@
             <section class="scoring-section">
                 <div class="section-header">
                     <h2>⭐ 专家评分</h2>
-                    <p class="scoring-desc">请根据AI诊断结果的质量进行评分（1-5分制）</p>
+                    <p class="scoring-desc">请根据诊断结果的质量进行评分（1-5分制）</p>
                 </div>
 
                 <form id="scoringForm" class="scoring-form">
@@ -304,7 +304,7 @@
                     <!-- 总体评价 -->
                     <div class="overall-section">
                         <h3>💬 总体评价</h3>
-                        <textarea id="overallComment" class="overall-comment" placeholder="请提供对该AI诊断结果的总体评价和改进建议..."></textarea>
+                        <textarea id="overallComment" class="overall-comment" placeholder="请提供对该诊断结果的总体评价和改进建议..."></textarea>
                     </div>
 
                     <!-- 提交按钮 -->

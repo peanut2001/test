@@ -855,8 +855,8 @@ class AdminSystem {
                             <span>${imageType}</span>
                         </div>
                         <div class="info-item">
-                            <label>AI模型:</label>
-                            <span>MedicalAI-v2.1</span>
+                            <label>分析模型:</label>
+                            <span>Medical-v2.1</span>
                         </div>
                         <div class="info-item">
                             <label>评估时间:</label>
@@ -865,12 +865,12 @@ class AdminSystem {
                     </div>
                 </section>
 
-                <!-- AI诊断结果 -->
-                <section class="ai-result-section">
+                <!-- 诊断结果 -->
+                <section class="result-section">
                     <div class="section-header">
-                        <h3>🤖 AI诊断结果</h3>
+                        <h3>📋 诊断结果</h3>
                     </div>
-                    <div class="ai-result-content">
+                    <div class="result-content">
                         <div class="result-item">
                             <h4>图像特征分析</h4>
                             <div class="feature-tags">
@@ -902,7 +902,7 @@ class AdminSystem {
                 <section class="scoring-section">
                     <div class="section-header">
                         <h3>⭐ 专家评分</h3>
-                        <p>请根据AI诊断结果的质量进行评分（1-5分制）</p>
+                        <p>请根据诊断结果的质量进行评分（1-5分制）</p>
                     </div>
                     <form id="modelScoringForm" class="scoring-form">
                         ${this.generateScoringDimensions()}
@@ -910,7 +910,7 @@ class AdminSystem {
                         <!-- 总体评价 -->
                         <div class="overall-section">
                             <h4>💬 总体评价</h4>
-                            <textarea id="overallComment" class="overall-comment" placeholder="请提供对该AI诊断结果的总体评价和改进建议..."></textarea>
+                            <textarea id="overallComment" class="overall-comment" placeholder="请提供对该诊断结果的总体评价和改进建议..."></textarea>
                         </div>
 
                         <!-- 提交按钮 -->
@@ -1054,8 +1054,8 @@ class AdminSystem {
         const script = document.createElement('script');
         script.src = 'model-scoring-script.js';
         script.onload = () => {
-            if (window.MedicalAIScoringSystem) {
-                this.scoringSystem = new window.MedicalAIScoringSystem();
+            if (window.MedicalScoringSystem) {
+                this.scoringSystem = new window.MedicalScoringSystem();
             }
         };
         document.head.appendChild(script);
@@ -1234,8 +1234,8 @@ class AdminSystem {
 // 初始化系统
 const adminSystem = new AdminSystem();
 
-// 现代化医学AI图像标注系统
-class ModernMedicalAIAnnotationSystem {
+// 现代化医学图像标注系统
+class ModernMedicalAnnotationSystem {
     constructor() {
         this.currentTool = 'select';
         this.annotations = [];
@@ -1260,8 +1260,7 @@ class ModernMedicalAIAnnotationSystem {
         this.initUpload();
         this.initToolbar();
         this.initImageControls();
-        this.initAnalysis();
-        this.initAnalysisToggle();
+        this.initClearFunction();
         this.initQuickActions();
     }
 
@@ -1521,7 +1520,7 @@ class ModernMedicalAIAnnotationSystem {
             id: this.annotationCounter,
             ...annotation,
             imageIndex: this.currentImageIndex,
-            aiSuggested: false
+
         };
 
         this.annotations.push(annotationData);
@@ -1560,19 +1559,13 @@ class ModernMedicalAIAnnotationSystem {
     drawAnnotation(annotation) {
         if (!this.ctx) return;
 
-        const isAI = annotation.aiSuggested;
-        const color = isAI ? '#667eea' : '#10b981';
+        const color = '#10b981';
 
         this.ctx.strokeStyle = color;
         this.ctx.lineWidth = 2;
         this.ctx.fillStyle = color;
         this.ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-
-        if (isAI) {
-            this.ctx.setLineDash([8, 4]);
-        } else {
-            this.ctx.setLineDash([]);
-        }
+        this.ctx.setLineDash([]);
 
         switch (annotation.type) {
             case 'rectangle':
@@ -1658,24 +1651,23 @@ class ModernMedicalAIAnnotationSystem {
         }
 
         annotationList.innerHTML = currentAnnotations.map(annotation => {
-            const isAI = annotation.aiSuggested;
             let description = '';
 
             switch (annotation.type) {
                 case 'rectangle':
-                    description = isAI ? 'AI识别区域' : '矩形标注';
+                    description = '矩形标注';
                     break;
                 case 'arrow':
-                    description = isAI ? 'AI关注点' : '箭头指向';
+                    description = '箭头指向';
                     break;
                 case 'text':
                     description = annotation.text || '文本标注';
                     break;
             }
 
-            const idClass = isAI ? 'ai' : 'user';
-            const idText = isAI ? `AI${annotation.id}` : `#${annotation.id}`;
-            const itemClass = isAI ? 'modern-annotation-item ai-suggested' : 'modern-annotation-item';
+            const idClass = 'user';
+            const idText = `#${annotation.id}`;
+            const itemClass = 'modern-annotation-item';
 
             return `
                 <div class="${itemClass}" data-id="${annotation.id}">
@@ -1723,24 +1715,7 @@ class ModernMedicalAIAnnotationSystem {
         document.querySelector(`[data-id="${id}"]`)?.classList.add('highlighted');
     }
 
-    // 确认AI标注
-    confirmAnnotation(id) {
-        const annotation = this.annotations.find(ann => ann.id === id);
-        if (!annotation || !annotation.aiSuggested) return;
 
-        annotation.aiSuggested = false;
-
-        if (this.uploadedImages[this.currentImageIndex]) {
-            const imgAnnotation = this.uploadedImages[this.currentImageIndex].annotations.find(ann => ann.id === id);
-            if (imgAnnotation) {
-                imgAnnotation.aiSuggested = false;
-            }
-        }
-
-        this.updateAnnotationList();
-        this.redrawAnnotations();
-        this.showNotification('已确认AI标注', 'success');
-    }
 
     // 编辑标注
     editAnnotation(id) {
@@ -1843,30 +1818,13 @@ class ModernMedicalAIAnnotationSystem {
         if (nextBtn) nextBtn.disabled = this.currentImageIndex >= this.uploadedImages.length - 1;
     }
 
-    // 初始化分析功能
-    initAnalysis() {
-        document.getElementById('startAnalysisBtn')?.addEventListener('click', () => {
-            this.startAnalysis();
-        });
-
+    // 初始化清除功能
+    initClearFunction() {
         document.getElementById('clearInputBtn')?.addEventListener('click', () => {
             if (confirm('确定要重置所有内容吗？')) {
                 this.clearAll();
             }
         });
-    }
-
-    // 初始化分析结果折叠功能
-    initAnalysisToggle() {
-        const toggleHeader = document.getElementById('analysisToggleHeader');
-        const toggleBtn = document.getElementById('analysisToggleBtn');
-        const contentWrapper = document.getElementById('analysisContentWrapper');
-
-        if (toggleHeader && toggleBtn && contentWrapper) {
-            toggleHeader.addEventListener('click', () => {
-                this.toggleAnalysisSection();
-            });
-        }
     }
 
     // 切换分析结果区域的展开/折叠状态
@@ -1895,10 +1853,6 @@ class ModernMedicalAIAnnotationSystem {
 
     // 初始化快速操作
     initQuickActions() {
-        document.getElementById('confirmAllBtn')?.addEventListener('click', () => {
-            this.confirmAllAIAnnotations();
-        });
-
         document.getElementById('clearAllBtn')?.addEventListener('click', () => {
             if (confirm('确定要清除所有标注吗？')) {
                 this.clearAllAnnotations();
@@ -1961,190 +1915,13 @@ class ModernMedicalAIAnnotationSystem {
         }, 3000);
     }
 
-    // 自动分析
-    autoAnalyze() {
-        if (!document.getElementById('autoAnnotation')?.checked) {
-            // 如果没有自动标注选项，默认进行自动分析
-            this.updateAnalysisStatus('analyzing', 'AI自动分析中...');
 
-            setTimeout(() => {
-                this.generateAIAnnotations();
-                this.generateAnalysisResults();
-            }, 2000);
-        }
-    }
 
-    // 开始分析
-    startAnalysis() {
-        const clinicalQuestion = document.getElementById('clinicalQuestion').value;
 
-        if (!clinicalQuestion.trim() && this.uploadedImages.length === 0) {
-            this.showNotification('请输入临床问题或上传图像', 'warning');
-            return;
-        }
 
-        // 自动展开分析结果区域
-        this.expandAnalysisSection();
 
-        this.updateAnalysisStatus('analyzing', '重新分析中...');
 
-        setTimeout(() => {
-            this.generateAnalysisResults();
-        }, 1500);
-    }
 
-    // 展开分析结果区域
-    expandAnalysisSection() {
-        const toggleBtn = document.getElementById('analysisToggleBtn');
-        const contentWrapper = document.getElementById('analysisContentWrapper');
-
-        if (toggleBtn && contentWrapper) {
-            contentWrapper.style.display = 'block';
-            setTimeout(() => {
-                contentWrapper.classList.add('expanded');
-                toggleBtn.classList.add('expanded');
-            }, 10);
-        }
-    }
-
-    // 生成AI标注
-    generateAIAnnotations() {
-        if (!this.canvas) return;
-
-        const suggestions = [
-            {
-                type: 'rectangle',
-                startX: this.canvas.width * 0.25,
-                startY: this.canvas.height * 0.2,
-                endX: this.canvas.width * 0.55,
-                endY: this.canvas.height * 0.45,
-                aiSuggested: true
-            },
-            {
-                type: 'arrow',
-                x: this.canvas.width * 0.7,
-                y: this.canvas.height * 0.3,
-                aiSuggested: true
-            }
-        ];
-
-        suggestions.forEach(suggestion => {
-            this.annotationCounter++;
-            const annotationData = {
-                id: this.annotationCounter,
-                ...suggestion,
-                imageIndex: this.currentImageIndex
-            };
-
-            this.annotations.push(annotationData);
-
-            if (this.uploadedImages[this.currentImageIndex]) {
-                this.uploadedImages[this.currentImageIndex].annotations.push(annotationData);
-            }
-        });
-
-        this.updateAnnotationList();
-        this.redrawAnnotations();
-        this.showNotification('AI已自动识别并标注关键区域', 'info');
-    }
-
-    // 生成分析结果
-    generateAnalysisResults() {
-        const clinicalQuestion = document.getElementById('clinicalQuestion').value;
-        const currentAnnotations = this.annotations.filter(ann => ann.imageIndex === this.currentImageIndex);
-        const aiAnnotations = currentAnnotations.filter(ann => ann.aiSuggested);
-        const userAnnotations = currentAnnotations.filter(ann => !ann.aiSuggested);
-
-        // 生成思考内容
-        let thinkingContent = `
-            <div style="line-height: 1.6;">
-                <h4 style="color: #374151; margin-bottom: 1rem;">📋 临床信息分析</h4>
-                <p style="margin-bottom: 1rem;">${clinicalQuestion || '未提供具体临床描述'}</p>
-
-                <h4 style="color: #374151; margin-bottom: 1rem;">🔍 影像学发现</h4>
-                <p style="margin-bottom: 1rem;">已分析 ${this.uploadedImages.length} 张医学图像</p>
-        `;
-
-        if (aiAnnotations.length > 0) {
-            thinkingContent += `
-                <div style="background: #eff6ff; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                    <h5 style="color: #1d4ed8; margin-bottom: 0.5rem;">🤖 AI识别特征 (${aiAnnotations.length}个)</h5>
-                    <ul style="margin: 0; padding-left: 1.5rem;">
-            `;
-            aiAnnotations.forEach(ann => {
-                const desc = ann.type === 'rectangle' ? 'AI识别的可疑区域' : 'AI识别的关注点';
-                thinkingContent += `<li style="margin-bottom: 0.25rem;"><span style="background: #667eea; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">AI${ann.id}</span> ${desc}</li>`;
-            });
-            thinkingContent += `</ul></div>`;
-        }
-
-        if (userAnnotations.length > 0) {
-            thinkingContent += `
-                <div style="background: #f0fdf4; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                    <h5 style="color: #166534; margin-bottom: 0.5rem;">👨‍⚕️ 医师标注 (${userAnnotations.length}个)</h5>
-                    <ul style="margin: 0; padding-left: 1.5rem;">
-            `;
-            userAnnotations.forEach(ann => {
-                const desc = ann.type === 'rectangle' ? '医师标注区域' : ann.type === 'text' ? ann.text : '医师关注点';
-                thinkingContent += `<li style="margin-bottom: 0.25rem;"><span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">#${ann.id}</span> ${desc}</li>`;
-            });
-            thinkingContent += `</ul></div>`;
-        }
-
-        thinkingContent += `
-                <h4 style="color: #374151; margin-bottom: 1rem;">💡 分析结论</h4>
-                <p>基于AI智能识别和医师专业标注，建议重点关注标注区域的影像学特征，结合临床症状进行综合判断。</p>
-            </div>
-        `;
-
-        // 生成诊断建议
-        let responseContent = `
-            <div style="line-height: 1.6;">
-                <h4 style="color: #374151; margin-bottom: 1rem;">🩺 诊断建议</h4>
-        `;
-
-        if (currentAnnotations.length > 0) {
-            responseContent += `<p style="margin-bottom: 1rem;">根据影像学表现和标注区域分析：</p><ul style="margin-bottom: 1.5rem; padding-left: 1.5rem;">`;
-            currentAnnotations.forEach(ann => {
-                const prefix = ann.aiSuggested ? `<span style="background: #667eea; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">AI${ann.id}</span>` : `<span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">#${ann.id}</span>`;
-                responseContent += `<li style="margin-bottom: 0.5rem;">${prefix} 标注区域需要进一步评估和确认</li>`;
-            });
-            responseContent += `</ul>`;
-        }
-
-        responseContent += `
-                <h4 style="color: #374151; margin-bottom: 1rem;">📋 临床建议</h4>
-                <ul style="margin-bottom: 1.5rem; padding-left: 1.5rem;">
-                    <li style="margin-bottom: 0.5rem;">结合患者病史、体格检查及实验室检查结果</li>
-                    <li style="margin-bottom: 0.5rem;">必要时考虑进一步影像学检查或病理检查</li>
-                    <li style="margin-bottom: 0.5rem;">建议专科医师会诊，制定个体化诊疗方案</li>
-                    <li style="margin-bottom: 0.5rem;">定期随访观察病情变化</li>
-                </ul>
-
-                <div style="background: #fef3c7; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid #f59e0b;">
-                    <p style="margin: 0; font-size: 0.875rem;"><strong>⚠️ 重要提示：</strong> 本AI分析仅供参考，最终诊断需要结合完整的临床资料由专业医师做出。</p>
-                </div>
-            </div>
-        `;
-
-        // 更新界面
-        document.getElementById('thinkingContent').innerHTML = thinkingContent;
-        document.getElementById('answerContent').innerHTML = responseContent;
-        this.updateAnalysisStatus('complete', '分析完成');
-    }
-
-    // 更新分析状态
-    updateAnalysisStatus(status, text) {
-        const statusElement = document.getElementById('thinkingStatus');
-        if (!statusElement) return;
-
-        let className = 'status-waiting';
-        if (status === 'analyzing') className = 'status-analyzing';
-        if (status === 'complete') className = 'status-complete';
-
-        statusElement.className = `modern-status-badge ${className}`;
-        statusElement.textContent = text;
-    }
 
     // 撤销最后一个标注
     undoLastAnnotation() {
@@ -2167,32 +1944,7 @@ class ModernMedicalAIAnnotationSystem {
         this.redrawAnnotations();
     }
 
-    // 确认所有AI标注
-    confirmAllAIAnnotations() {
-        const aiAnnotations = this.annotations.filter(ann =>
-            ann.imageIndex === this.currentImageIndex && ann.aiSuggested
-        );
 
-        if (aiAnnotations.length === 0) {
-            this.showNotification('当前图像没有AI标注', 'info');
-            return;
-        }
-
-        aiAnnotations.forEach(ann => {
-            ann.aiSuggested = false;
-
-            if (this.uploadedImages[this.currentImageIndex]) {
-                const imgAnnotation = this.uploadedImages[this.currentImageIndex].annotations.find(a => a.id === ann.id);
-                if (imgAnnotation) {
-                    imgAnnotation.aiSuggested = false;
-                }
-            }
-        });
-
-        this.updateAnnotationList();
-        this.redrawAnnotations();
-        this.showNotification(`已确认 ${aiAnnotations.length} 个AI标注`, 'success');
-    }
 
     // 清除所有标注
     clearAllAnnotations() {
@@ -2245,20 +1997,7 @@ class ModernMedicalAIAnnotationSystem {
         this.updateThumbnails();
         this.updateAnnotationList();
 
-        // 重置分析内容
-        document.getElementById('thinkingContent').innerHTML = `
-            <div class="modern-analysis-placeholder">
-                <i class="fas fa-lightbulb"></i>
-                <p>上传图像并开始分析后，AI的思考过程将在此显示</p>
-            </div>
-        `;
-        document.getElementById('answerContent').innerHTML = `
-            <div class="modern-analysis-placeholder">
-                <i class="fas fa-clipboard-list"></i>
-                <p>AI分析完成后，诊断建议和治疗方案将在此显示</p>
-            </div>
-        `;
-        this.updateAnalysisStatus('waiting', '等待分析');
+
     }
 }
 
@@ -2285,7 +2024,6 @@ class ImageAnnotationSystem {
         this.initCanvas();
         this.initToolbar();
         this.initImageControls();
-        this.initAnalysis();
     }
 
     // 初始化图片上传功能
@@ -2933,193 +2671,16 @@ class ImageAnnotationSystem {
         }
     }
 
-    // 初始化AI分析功能
-    initAnalysis() {
-        const startAnalysisBtn = document.getElementById('startAnalysisBtn');
-        const clearInputBtn = document.getElementById('clearInputBtn');
 
-        startAnalysisBtn?.addEventListener('click', () => {
-            this.startAIAnalysis();
-        });
 
-        clearInputBtn?.addEventListener('click', () => {
-            this.clearInput();
-        });
-    }
 
-    // 开始AI分析
-    startAIAnalysis() {
-        const clinicalQuestion = document.getElementById('clinicalQuestion')?.value;
-        const thinkingContent = document.getElementById('thinkingContent');
-        const answerContent = document.getElementById('answerContent');
-        const thinkingStatus = document.getElementById('thinkingStatus');
-
-        if (!clinicalQuestion.trim() && this.uploadedImages.length === 0) {
-            alert('请输入临床问题或上传图像后再开始分析');
-            return;
-        }
-
-        // 更新状态
-        if (thinkingStatus) {
-            thinkingStatus.innerHTML = '<span class="status-text status-loading">AI分析中...</span><div class="loading-spinner"></div>';
-        }
-
-        // 模拟AI分析过程
-        this.simulateAIAnalysis(clinicalQuestion, thinkingContent, answerContent, thinkingStatus);
-    }
-
-    // 模拟AI分析过程
-    simulateAIAnalysis(question, thinkingContent, answerContent, statusElement) {
-        // 清空之前的内容
-        if (thinkingContent) {
-            thinkingContent.innerHTML = '<div class="thinking-placeholder"><i class="fas fa-spinner fa-spin"></i><p>AI正在分析中...</p></div>';
-        }
-        if (answerContent) {
-            answerContent.innerHTML = '<div class="answer-placeholder"><i class="fas fa-spinner fa-spin"></i><p>等待分析完成...</p></div>';
-        }
-
-        // 模拟分析延迟
-        setTimeout(() => {
-            this.generateAIResponse(question, thinkingContent, answerContent, statusElement);
-        }, 2000);
-    }
-
-    // 生成AI响应
-    generateAIResponse(question, thinkingContent, answerContent, statusElement) {
-        // 更新状态
-        if (statusElement) {
-            statusElement.innerHTML = '<span class="status-text status-complete">分析完成</span>';
-        }
-
-        // 生成思考内容
-        const thinkingText = this.generateThinkingContent(question);
-        if (thinkingContent) {
-            thinkingContent.innerHTML = `<div class="text-editor" contenteditable="true">${thinkingText}</div>`;
-        }
-
-        // 生成回答内容
-        const answerText = this.generateAnswerContent(question);
-        if (answerContent) {
-            answerContent.innerHTML = `<div class="text-editor" contenteditable="true">${answerText}</div>`;
-        }
-
-        // 启用标注引用功能
-        this.enableAnnotationReferences();
-    }
-
-    // 生成思考内容
-    generateThinkingContent(question) {
-        const currentAnnotations = this.annotations.filter(ann => ann.imageIndex === this.currentImageIndex);
-        let content = `<p><strong>临床问题分析：</strong></p>`;
-        content += `<p>根据患者描述：${question || '未提供具体症状描述'}</p>`;
-
-        if (this.uploadedImages.length > 0) {
-            content += `<p><strong>影像学分析：</strong></p>`;
-            content += `<p>已上传 ${this.uploadedImages.length} 张医学图像进行分析。</p>`;
-
-            if (currentAnnotations.length > 0) {
-                content += `<p>当前图像发现 ${currentAnnotations.length} 个关键特征：</p><ul>`;
-                currentAnnotations.forEach(ann => {
-                    let desc = '';
-                    switch (ann.type) {
-                        case 'rectangle':
-                            desc = '框选区域显示异常密度改变';
-                            break;
-                        case 'arrow':
-                            desc = '箭头指向的结构需要重点关注';
-                            break;
-                        case 'text':
-                            desc = ann.text || '文本标注区域';
-                            break;
-                    }
-                    content += `<li><span class="annotation-reference" data-id="${ann.id}">[影像-标注#${ann.id}]</span> ${desc}</li>`;
-                });
-                content += `</ul>`;
-            }
-        }
-
-        content += `<p><strong>初步判断：</strong></p>`;
-        content += `<p>基于现有信息，建议进一步检查以明确诊断。需要结合患者病史、体格检查及其他辅助检查结果综合判断。</p>`;
-
-        return content;
-    }
-
-    // 生成回答内容
-    generateAnswerContent(question) {
-        const currentAnnotations = this.annotations.filter(ann => ann.imageIndex === this.currentImageIndex);
-        let content = `<p><strong>诊断建议：</strong></p>`;
-
-        if (currentAnnotations.length > 0) {
-            content += `<p>根据影像学表现，特别是标注的关键区域：</p><ul>`;
-            currentAnnotations.forEach(ann => {
-                content += `<li><span class="annotation-reference" data-id="${ann.id}">[影像-标注#${ann.id}]</span> 区域的特征提示需要进一步评估</li>`;
-            });
-            content += `</ul>`;
-        }
-
-        content += `<p><strong>建议：</strong></p>`;
-        content += `<ul>`;
-        content += `<li>建议结合临床症状和体征进行综合判断</li>`;
-        content += `<li>如有必要，可考虑进一步影像学检查</li>`;
-        content += `<li>建议专科医师会诊</li>`;
-        content += `<li>定期随访观察病情变化</li>`;
-        content += `</ul>`;
-
-        content += `<p><strong>注意事项：</strong></p>`;
-        content += `<p>本分析仅供参考，最终诊断需要结合完整的临床资料由专业医师做出。</p>`;
-
-        return content;
-    }
-
-    // 启用标注引用功能
-    enableAnnotationReferences() {
-        const references = document.querySelectorAll('.annotation-reference');
-
-        references.forEach(ref => {
-            const annotationId = parseInt(ref.dataset.id);
-
-            ref.addEventListener('mouseenter', () => {
-                this.highlightAnnotation(annotationId);
-                ref.classList.add('highlighted');
-            });
-
-            ref.addEventListener('mouseleave', () => {
-                this.unhighlightAnnotation(annotationId);
-                ref.classList.remove('highlighted');
-            });
-
-            ref.addEventListener('click', () => {
-                this.highlightAnnotation(annotationId);
-                // 滚动到对应的标注列表项
-                const listItem = document.querySelector(`[data-id="${annotationId}"]`);
-                if (listItem) {
-                    listItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            });
-        });
-    }
 
     // 清空输入
     clearInput() {
         if (confirm('确定要清空所有输入内容吗？')) {
             const clinicalQuestion = document.getElementById('clinicalQuestion');
-            const thinkingContent = document.getElementById('thinkingContent');
-            const answerContent = document.getElementById('answerContent');
-            const thinkingStatus = document.getElementById('thinkingStatus');
 
             if (clinicalQuestion) clinicalQuestion.value = '';
-
-            if (thinkingContent) {
-                thinkingContent.innerHTML = '<div class="thinking-placeholder"><i class="fas fa-lightbulb"></i><p>请上传图像并点击"开始AI分析"来查看AI的思考过程</p></div>';
-            }
-
-            if (answerContent) {
-                answerContent.innerHTML = '<div class="answer-placeholder"><i class="fas fa-stethoscope"></i><p>AI分析完成后，诊断建议将在此显示</p></div>';
-            }
-
-            if (thinkingStatus) {
-                thinkingStatus.innerHTML = '<span class="status-text">等待分析...</span>';
-            }
 
             // 清空图片和标注
             this.uploadedImages = [];
@@ -3137,15 +2698,15 @@ class ImageAnnotationSystem {
     }
 }
 
-// 初始化现代化医学AI图像标注系统
-let modernMedicalAI;
+// 初始化现代化医学图像标注系统
+let modernMedical;
 
 // 当页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
     // 检查是否在图像分析页面
     const imageAnalysisPage = document.getElementById('image-analysis-page');
     if (imageAnalysisPage) {
-        modernMedicalAI = new ModernMedicalAIAnnotationSystem();
+        modernMedical = new ModernMedicalAnnotationSystem();
     }
 });
 

@@ -1468,7 +1468,7 @@ textarea:focus, input[type="text"]:focus {
     gap: 25px;
 }
 
-.case-info-section, .ai-result-section, .scoring-section, .score-preview-section {
+.case-info-section, .result-section, .scoring-section, .score-preview-section {
     background: white;
     border-radius: 12px;
     padding: 20px;
@@ -1536,7 +1536,7 @@ textarea:focus, input[type="text"]:focus {
     gap: 8px;
 }
 
-.ai-result-section .tag {
+.result-section .tag {
     background: linear-gradient(135deg, #007bff, #0056b3);
     color: white;
     padding: 6px 12px;
@@ -1837,7 +1837,7 @@ textarea:focus, input[type="text"]:focus {
         gap: 20px;
     }
 
-    .case-info-section, .ai-result-section, .scoring-section, .score-preview-section {
+    .case-info-section, .result-section, .scoring-section, .score-preview-section {
         padding: 15px;
     }
 }
@@ -2022,7 +2022,7 @@ textarea:focus, input[type="text"]:focus {
     padding: 20px;
 }
 
-.clinical-data-section, .ai-thinking-section, .ai-answer-section {
+.clinical-data-section, .thinking-section, .answer-section {
     border: 1px solid #e1e8ed;
     border-radius: 8px;
     overflow: hidden;
@@ -2528,7 +2528,7 @@ textarea:focus, input[type="text"]:focus {
     }
 }
 
-/* 现代化医学AI标注系统样式 */
+/* 现代化医学图像标注系统样式 */
 .modern-workspace {
     display: grid;
     grid-template-columns: 280px 1fr 300px;
@@ -3263,9 +3263,7 @@ textarea:focus, input[type="text"]:focus {
     border-color: #667eea;
 }
 
-.modern-annotation-item.ai-suggested {
-    border-left: 3px solid #667eea;
-}
+
 
 .modern-annotation-info {
     display: flex;

@@ -1,5 +1,5 @@
-// 医学AI模型评分系统JavaScript
-class MedicalAIScoringSystem {
+// 医学模型评分系统JavaScript
+class MedicalScoringSystem {
     constructor() {
         this.scores = {
             accuracy: 0,
@@ -449,5 +449,5 @@ document.head.appendChild(style);
 
 // 初始化系统
 document.addEventListener('DOMContentLoaded', () => {
-    new MedicalAIScoringSystem();
+    new MedicalScoringSystem();
 });

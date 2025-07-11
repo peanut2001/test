@@ -109,8 +109,8 @@ section {
     color: #34495e;
 }
 
-/* AI结果展示样式 */
-.ai-result {
+/* 结果展示样式 */
+.result {
     display: grid;
     gap: 20px;
 }
