@@ -11,6 +11,7 @@ class AdminSystem {
     this.initSidebar();
     this.initDataCollection();
     this.initDataTable();
+    this.initReports();
     this.initResponsive();
   }
 
@@ -1011,6 +1012,65 @@ class AdminSystem {
                 </section>
             </div>
         `;
+  }
+
+  // 初始化报告页面
+  initReports() {
+    // 初始化报告选项卡
+    this.initReportTabs();
+
+    // 初始化目录链接
+    this.initTocLinks();
+  }
+
+  // 初始化报告选项卡
+  initReportTabs() {
+    const reportTabs = document.querySelectorAll(".report-tab");
+    const reportContents = document.querySelectorAll(".report-content");
+
+    reportTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const targetTab = tab.getAttribute("data-tab");
+
+        // 移除所有活动状态
+        reportTabs.forEach((t) => t.classList.remove("active"));
+        reportContents.forEach((c) => c.classList.remove("active"));
+
+        // 添加当前活动状态
+        tab.classList.add("active");
+        const targetContent = document.getElementById(targetTab);
+        if (targetContent) {
+          targetContent.classList.add("active");
+        }
+      });
+    });
+  }
+
+  // 初始化目录链接
+  initTocLinks() {
+    const tocLinks = document.querySelectorAll(".toc a");
+
+    tocLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute("href").substring(1);
+        const targetElement = document.getElementById(targetId);
+
+        if (targetElement) {
+          // 平滑滚动到目标元素
+          targetElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+
+          // 添加高亮效果
+          targetElement.style.backgroundColor = "#e3f2fd";
+          setTimeout(() => {
+            targetElement.style.backgroundColor = "";
+          }, 2000);
+        }
+      });
+    });
   }
 
   // 响应式处理

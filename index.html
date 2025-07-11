@@ -828,10 +828,365 @@
                         <h2>统计报告</h2>
                         <p class="page-description">数据统计和分析报告</p>
                     </div>
-                    <div class="coming-soon">
-                        <i class="fas fa-chart-bar"></i>
-                        <h3>功能开发中</h3>
-                        <p>统计报告功能正在开发中，敬请期待</p>
+
+                    <!-- 报告选项卡 -->
+                    <div class="report-tabs">
+                        <button class="report-tab active" data-tab="workflow-report">
+                            <i class="fas fa-sitemap"></i>
+                            <span>工作流程报告</span>
+                        </button>
+                        <button class="report-tab" data-tab="data-statistics">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>数据统计</span>
+                        </button>
+                        <button class="report-tab" data-tab="quality-analysis">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span>质量分析</span>
+                        </button>
+                    </div>
+
+                    <!-- 工作流程报告内容 -->
+                    <div id="workflow-report" class="report-content active">
+                        <div class="workflow-document">
+                            <div class="document-header">
+                                <h1>医学图像数据采集与标注流程</h1>
+                                <h2>系统设计与实现文档</h2>
+                            </div>
+
+                            <div class="doc-info">
+                                <table>
+                                    <tr>
+                                        <td><strong>文档版本：</strong></td>
+                                        <td>v1.0</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>创建日期：</strong></td>
+                                        <td>2025年7月11日</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>文档类型：</strong></td>
+                                        <td>系统设计说明书</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>适用范围：</strong></td>
+                                        <td>医学图像数据采集管理系统</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="toc">
+                                <h3>📋 目录</h3>
+                                <ol>
+                                    <li><a href="#overview">项目概述</a></li>
+                                    <li><a href="#architecture">系统架构</a></li>
+                                    <li><a href="#workflow">工作流程详述</a></li>
+                                    <li><a href="#implementation">技术实现</a></li>
+                                    <li><a href="#data-structure">数据结构设计</a></li>
+                                    <li><a href="#value">应用价值分析</a></li>
+                                    <li><a href="#future">未来发展规划</a></li>
+                                    <li><a href="#conclusion">总结</a></li>
+                                </ol>
+                            </div>
+
+                            <div class="section" id="overview">
+                                <h2>1. 项目概述</h2>
+
+                                <h3>1.1 项目背景</h3>
+                                <p>随着人工智能在医学影像诊断领域的快速发展，高质量的标注数据成为训练优秀AI模型的关键要素。传统的医学图像数据采集和标注流程往往存在以下问题：</p>
+
+                                <div class="feature-grid">
+                                    <div class="feature-card">
+                                        <h4>🔄 流程分散</h4>
+                                        <p>图像采集、标注、诊断录入分别在不同系统中进行</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>📊 数据不一致</h4>
+                                        <p>缺乏统一的数据格式和标准</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>⚡ 效率低下</h4>
+                                        <p>重复录入信息，工作流程不够流畅</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>🎯 质量难控</h4>
+                                        <p>缺乏有效的数据验证和质量控制机制</p>
+                                    </div>
+                                </div>
+
+                                <h3>1.2 项目目标</h3>
+                                <p>本项目旨在构建一个集成化的医学图像数据采集与标注管理系统，实现：</p>
+                                <ul>
+                                    <li><strong>一体化工作流</strong>：将图像上传、标注、诊断录入整合为统一流程</li>
+                                    <li><strong>标准化数据</strong>：建立统一的数据格式和存储标准</li>
+                                    <li><strong>智能化操作</strong>：提供便捷的用户界面和智能辅助功能</li>
+                                    <li><strong>高质量输出</strong>：确保生成的训练数据符合AI模型训练要求</li>
+                                </ul>
+                            </div>
+
+                            <div class="section" id="architecture">
+                                <h2>2. 系统架构</h2>
+
+                                <h3>2.1 整体架构</h3>
+                                <p>系统采用模块化设计，主要包含以下核心模块：</p>
+
+                                <div class="stage">
+                                    <h3>🖥️ 前端展示层</h3>
+                                    <ul>
+                                        <li>数据采集界面</li>
+                                        <li>图像标注界面</li>
+                                        <li>数据管理界面</li>
+                                        <li>系统控制面板</li>
+                                    </ul>
+                                </div>
+
+                                <div class="stage">
+                                    <h3>⚙️ 业务逻辑层</h3>
+                                    <ul>
+                                        <li>图像处理模块</li>
+                                        <li>标注管理模块</li>
+                                        <li>数据验证模块</li>
+                                        <li>工作流控制模块</li>
+                                    </ul>
+                                </div>
+
+                                <div class="stage">
+                                    <h3>💾 数据存储层</h3>
+                                    <ul>
+                                        <li>本地存储（LocalStorage）</li>
+                                        <li>会话存储（SessionStorage）</li>
+                                        <li>文件系统存储</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="section" id="workflow">
+                                <h2>3. 工作流程详述</h2>
+
+                                <div class="flow-step">
+                                    <h4>🔵 第一阶段：数据采集页面</h4>
+                                    <p><strong>图像上传</strong> → <strong>基础信息录入</strong> → <strong>标注选项决策</strong></p>
+                                </div>
+
+                                <div class="flow-step">
+                                    <h4>🟢 第二阶段：图像分析页面（可选）</h4>
+                                    <p><strong>选择标注工具</strong> → <strong>图像标注操作</strong> → <strong>标注管理</strong> →
+                                        <strong>保存标注</strong> → <strong>返回数据采集</strong>
+                                    </p>
+                                </div>
+
+                                <div class="flow-step">
+                                    <h4>🔴 第三阶段：诊断数据录入</h4>
+                                    <p><strong>图像特征分析</strong> → <strong>诊断联想录入</strong> → <strong>诊断依据记录</strong> →
+                                        <strong>诊断结果确定</strong> → <strong>数据验证提交</strong>
+                                    </p>
+                                </div>
+
+                                <h3>3.1 标注工具介绍</h3>
+                                <div class="feature-grid">
+                                    <div class="feature-card">
+                                        <h4>🔲 矩形标注框</h4>
+                                        <p>用于标记规则的病灶区域，适用于结节、肿块等规则病灶</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>⭕ 圆形标注</h4>
+                                        <p>用于标记圆形病灶，适用于囊肿、圆形结节等</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>➡️ 箭头指示点</h4>
+                                        <p>用于指向关键特征，适用于钙化点、血管等细小结构</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>📝 文本标注框</h4>
+                                        <p>用于添加文字说明，适用于病灶描述、测量数据等</p>
+                                    </div>
+                                </div>
+
+                                <h3>3.2 诊断分类系统</h3>
+                                <table class="diagnosis-table">
+                                    <thead>
+                                        <tr>
+                                            <th>分类</th>
+                                            <th>描述</th>
+                                            <th>后续处理</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>正常</td>
+                                            <td>无异常发现</td>
+                                            <td>常规随访</td>
+                                        </tr>
+                                        <tr>
+                                            <td>良性</td>
+                                            <td>良性病变</td>
+                                            <td>定期复查</td>
+                                        </tr>
+                                        <tr>
+                                            <td>恶性</td>
+                                            <td>恶性病变</td>
+                                            <td>积极治疗</td>
+                                        </tr>
+                                        <tr>
+                                            <td>未定</td>
+                                            <td>需进一步检查</td>
+                                            <td>补充检查</td>
+                                        </tr>
+                                        <tr>
+                                            <td>其他</td>
+                                            <td>其他情况</td>
+                                            <td>个体化处理</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="section" id="data-structure">
+                                <h2>5. 数据结构设计</h2>
+
+                                <h3>5.1 完整数据模型</h3>
+                                <div class="data-structure">
+                                    <h4>📊 结构化诊断数据</h4>
+                                    <div class="code-block">
+                                        {
+                                        "id": "CASE-2025-001",
+                                        "fileName": "breast_ultrasound_001.jpg",
+                                        "basicInfo": {
+                                        "bodyPart": "breast",
+                                        "crossSection": "transverse",
+                                        "lesionType": "nodule"
+                                        },
+                                        "annotations": [
+                                        {
+                                        "id": 1,
+                                        "type": "rectangle",
+                                        "coordinates": { "x": 150, "y": 200, "width": 80, "height": 60 },
+                                        "text": "低回声结节"
+                                        }
+                                        ],
+                                        "imageFeatures": ["边界清晰", "回声均匀", "形态规则"],
+                                        "diagnosticThinking": ["考虑良性结节", "BI-RADS 3类"],
+                                        "diagnosticBasis": ["边界清晰完整", "内部回声均匀"],
+                                        "diagnosisResult": {
+                                        "type": "benign",
+                                        "detailedDiagnosis": "乳腺良性结节，建议随访"
+                                        }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section" id="value">
+                                <h2>8. 应用价值分析</h2>
+
+                                <div class="value-card">
+                                    <h4>🤖 医学AI训练价值</h4>
+                                    <p>提供标准化的数据格式、精确的标注信息、丰富的特征标签和完整的诊断信息</p>
+                                </div>
+
+                                <div class="value-card">
+                                    <h4>🏥 临床应用价值</h4>
+                                    <p>实现诊断流程标准化、提升质量控制水平、规范化诊断步骤</p>
+                                </div>
+
+                                <div class="value-card">
+                                    <h4>🔬 科研支持价值</h4>
+                                    <p>支持大数据分析、便于数据挖掘、促进知识积累和临床模式识别</p>
+                                </div>
+                            </div>
+
+                            <div class="section" id="future">
+                                <h2>9. 未来发展规划</h2>
+
+                                <div class="feature-grid">
+                                    <div class="feature-card">
+                                        <h4>🤖 AI辅助功能</h4>
+                                        <ul>
+                                            <li>自动病灶检测</li>
+                                            <li>智能标注建议</li>
+                                            <li>诊断辅助提示</li>
+                                        </ul>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>👥 协作功能</h4>
+                                        <ul>
+                                            <li>多专家协同标注</li>
+                                            <li>标注质量评估</li>
+                                            <li>专家意见汇总</li>
+                                        </ul>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>☁️ 云端集成</h4>
+                                        <ul>
+                                            <li>云端数据存储</li>
+                                            <li>实时数据同步</li>
+                                            <li>跨设备访问</li>
+                                        </ul>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>📱 移动端支持</h4>
+                                        <ul>
+                                            <li>移动设备适配</li>
+                                            <li>触屏操作优化</li>
+                                            <li>离线功能支持</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section" id="conclusion">
+                                <h2>10. 总结</h2>
+
+                                <div class="highlight">
+                                    <p><strong>本医学图像数据采集与标注系统通过集成化的设计理念，将传统分散的工作流程整合为统一的操作平台。</strong></p>
+                                </div>
+
+                                <h3>核心优势</h3>
+                                <div class="feature-grid">
+                                    <div class="feature-card">
+                                        <h4>🚀 技术先进性</h4>
+                                        <p>采用现代化的前端技术栈，模块化的系统架构设计，标准化的数据处理流程</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>👨‍💻 用户体验优秀</h4>
+                                        <p>直观简洁的用户界面，流畅便捷的操作流程，智能化的辅助功能</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>📊 数据质量可靠</h4>
+                                        <p>多层次的数据验证机制，标准化的数据格式，完整的质量控制体系</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h4>💎 应用价值显著</h4>
+                                        <p>为医学AI提供高质量训练数据，提升临床诊断工作效率，支持医学科研数据分析</p>
+                                    </div>
+                                </div>
+
+                                <p>该系统为医学图像数据的采集、标注和管理提供了完整的解决方案，具有重要的临床应用价值和科研意义。随着人工智能技术在医学领域的深入应用，本系统将为推动医学AI的发展做出重要贡献。
+                                </p>
+                            </div>
+
+                            <div class="footer">
+                                <p><strong>文档结束</strong></p>
+                                <p><em>本文档详细阐述了医学图像数据采集与标注系统的设计理念、技术实现和应用价值，为系统的开发、部署和应用提供了全面的指导。</em></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 数据统计内容 -->
+                    <div id="data-statistics" class="report-content">
+                        <div class="coming-soon">
+                            <i class="fas fa-chart-bar"></i>
+                            <h3>数据统计功能开发中</h3>
+                            <p>数据统计分析功能正在开发中，敬请期待</p>
+                        </div>
+                    </div>
+
+                    <!-- 质量分析内容 -->
+                    <div id="quality-analysis" class="report-content">
+                        <div class="coming-soon">
+                            <i class="fas fa-clipboard-check"></i>
+                            <h3>质量分析功能开发中</h3>
+                            <p>质量分析功能正在开发中，敬请期待</p>
+                        </div>
                     </div>
                 </div>
 
